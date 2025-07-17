@@ -1,0 +1,46 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+namespace FCG.Infra.Security.Contexts
+{
+    public class IdentityDataContext : IdentityDbContext
+    {
+        private readonly IHostEnvironment _environment;
+
+        public IdentityDataContext(DbContextOptions<IdentityDataContext> options, IHostEnvironment environment) : base(options)
+        {
+            _environment = environment;
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (_environment.IsDevelopment())
+                optionsBuilder
+                    .EnableSensitiveDataLogging()
+                    .EnableDetailedErrors()
+                    .LogTo(Console.WriteLine, LogLevel.Information);
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.HasDefaultSchema("identity");
+
+            modelBuilder.Entity<IdentityUser>(b => { b.ToTable("Users"); });
+            modelBuilder.Entity<IdentityRole>(b => { b.ToTable("Roles"); });
+            modelBuilder.Entity<IdentityUserRole<string>>(b => { b.ToTable("UserRoles"); });
+            modelBuilder.Entity<IdentityUserClaim<string>>(b => { b.ToTable("UserClaims"); });
+            modelBuilder.Entity<IdentityUserLogin<string>>(b => { b.ToTable("UserLogins"); });
+            modelBuilder.Entity<IdentityRoleClaim<string>>(b => { b.ToTable("RoleClaims"); });
+            modelBuilder.Entity<IdentityUserToken<string>>(b => { b.ToTable("UserTokens"); });
+        }
+    }
+}

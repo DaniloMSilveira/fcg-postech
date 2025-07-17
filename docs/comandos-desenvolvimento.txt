@@ -1,0 +1,17 @@
+
+CRIANDO E APLICANDO MIGRATIONS (Security Identity)
+
+cd src/FCG.Infra.Security
+
+dotnet ef migrations add <NOME_MIGRATION> -c IdentityDataContext -s ../FCG.API/
+
+dotnet ef database update -c IdentityDataContext -s ../FCG.API/
+
+
+CRIANDO E APLICANDO MIGRATIONS (Data - Entidades)
+
+cd src/FCG.Infra.Data
+
+dotnet ef migrations add <NOME_MIGRATION> -c FCGDataContext -s ../FCG.API/
+
+dotnet ef database update -c FCGDataContext -s ../FCG.API/

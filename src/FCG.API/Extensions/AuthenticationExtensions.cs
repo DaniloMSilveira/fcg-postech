@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FCG.Infra.Security.Configurations;
 using FCG.Infra.Security.Contexts;
+using FCG.Infra.Security.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -37,7 +38,7 @@ namespace FCG.API.Extensions
                 options.Password.RequiredLength = 8;
             });
 
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<IdentityCustomUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<IdentityDataContext>()
                 .AddDefaultTokenProviders();

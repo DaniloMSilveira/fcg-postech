@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FCG.Infra.Data.Migrations
 {
     [DbContext(typeof(FCGDataContext))]
-    [Migration("20250715000125_CriandoTabelaUsuarios")]
-    partial class CriandoTabelaUsuarios
+    [Migration("20250718003953_CriandoTabelaUsuario")]
+    partial class CriandoTabelaUsuario
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -43,7 +43,7 @@ namespace FCG.Infra.Data.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
 

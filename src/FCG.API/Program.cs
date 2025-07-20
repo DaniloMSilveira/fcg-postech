@@ -7,6 +7,7 @@ using FCG.Infra.Data.Contexts;
 using FCG.Infra.Data.Repositories;
 using FCG.Infra.Data.Seeds;
 using FCG.Infra.Security.Contexts;
+using FCG.Infra.Security.Models;
 using FCG.Infra.Security.Seeds;
 using FCG.Infra.Security.Services;
 using Microsoft.AspNetCore.Identity;
@@ -40,7 +41,7 @@ using (var scope = app.Services.CreateScope())
 {
     // Executando seed de dados identity (roles e usuário admin)
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityCustomUser>>();
     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
     await IdentitySeed.SeedData(userManager, roleManager);

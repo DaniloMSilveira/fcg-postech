@@ -19,6 +19,9 @@ namespace FCG.Application.DTOs.Outputs
             Data = data;
         }
 
+        public static BaseOutput<T> Ok()
+            => new(true, null);
+
         public static BaseOutput<T> Ok(T data)
             => new(true, null, data);
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FCG.Infra.Security.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FCG.Infra.Security.Contexts
 {
-    public class IdentityDataContext : IdentityDbContext
+    public class IdentityDataContext : IdentityDbContext<IdentityCustomUser>
     {
         private readonly IHostEnvironment _environment;
 
@@ -34,7 +35,7 @@ namespace FCG.Infra.Security.Contexts
 
             modelBuilder.HasDefaultSchema("identity");
 
-            modelBuilder.Entity<IdentityUser>(b => { b.ToTable("Users"); });
+            modelBuilder.Entity<IdentityCustomUser>(b => { b.ToTable("Users"); });
             modelBuilder.Entity<IdentityRole>(b => { b.ToTable("Roles"); });
             modelBuilder.Entity<IdentityUserRole<string>>(b => { b.ToTable("UserRoles"); });
             modelBuilder.Entity<IdentityUserClaim<string>>(b => { b.ToTable("UserClaims"); });

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FCG.Infra.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class CriandoTabelaUsuarios : Migration
+    public partial class CriandoTabelaUsuario : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace FCG.Infra.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Nome = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Nome = table.Column<string>(type: "varchar(256)", nullable: false),
                     Email = table.Column<string>(type: "varchar(100)", nullable: false),
                     CriadoEm = table.Column<DateTime>(type: "datetime", nullable: false),
                     ModificadoEm = table.Column<DateTime>(type: "datetime", nullable: true)

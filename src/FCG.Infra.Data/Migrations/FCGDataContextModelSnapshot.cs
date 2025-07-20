@@ -40,7 +40,7 @@ namespace FCG.Infra.Data.Migrations
 
                     b.Property<string>("Nome")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
 

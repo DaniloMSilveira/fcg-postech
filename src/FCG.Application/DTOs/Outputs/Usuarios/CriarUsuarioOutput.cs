@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 
-namespace FCG.Application.DTOs.Outputs
+namespace FCG.Application.DTOs.Outputs.Usuarios
 {
-    public class CadastrarUsuarioOutput
+    public class CriarUsuarioOutput
     {
         public Guid Id { get; set; }
 
-        public CadastrarUsuarioOutput(Guid id)
+        public CriarUsuarioOutput(Guid id)
         {
             Id = id;
         }

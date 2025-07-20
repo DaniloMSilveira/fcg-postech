@@ -14,36 +14,17 @@ namespace FCG.Infra.Security.Services
 {
     public class IdentityService : IIdentityService
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityCustomUser> _signInManager;
+        private readonly UserManager<IdentityCustomUser> _userManager;
         private readonly JwtOptions _jwtOptions;
 
-        public IdentityService(SignInManager<IdentityUser> signInManager,
-                               UserManager<IdentityUser> userManager,
+        public IdentityService(SignInManager<IdentityCustomUser> signInManager,
+                               UserManager<IdentityCustomUser> userManager,
                                IOptions<JwtOptions> jwtOptions)
         {
             _signInManager = signInManager;
             _userManager = userManager;
             _jwtOptions = jwtOptions.Value;
-        }
-
-        public async Task<IdentityRegisterResponse> CadastrarUsuario(string email, string senha)
-        {
-            var identityUser = new IdentityUser
-            {
-                UserName = email,
-                Email = email,
-                EmailConfirmed = true
-            };
-
-            var result = await _userManager.CreateAsync(identityUser, senha);
-            if (!result.Succeeded)
-                return new IdentityRegisterResponse(false, result.Errors.Select(r => r.Description).ToList());
-
-            await _userManager.SetLockoutEnabledAsync(identityUser, false);
-            await _userManager.AddToRoleAsync(identityUser, Roles.USUARIO);
-
-            return new IdentityRegisterResponse(true);
         }
 
         public async Task<IdentityTokenResponse> Login(string email, string senha)
@@ -60,6 +41,61 @@ namespace FCG.Infra.Security.Services
             }
 
             return await GerarCredenciais(email);
+        }
+
+        public async Task<IdentityResponse> CriarUsuario(string nome, string email, string senha)
+        {
+            var identityUser = new IdentityCustomUser
+            {
+                Nome = nome,
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
+
+            var result = await _userManager.CreateAsync(identityUser, senha);
+            if (!result.Succeeded)
+                return new IdentityResponse(false, result.Errors.Select(r => r.Description).ToList());
+
+            await _userManager.SetLockoutEnabledAsync(identityUser, false);
+            await _userManager.AddToRoleAsync(identityUser, Roles.USUARIO);
+
+            return new IdentityResponse(true);
+        }
+
+        public async Task<IdentityResponse> AlterarSenha(string email, string senhaAtual, string novaSenha)
+        {
+            var usuario = await _userManager.FindByEmailAsync(email);
+            if (usuario == null)
+                return new IdentityResponse("Usuário não encontrado.");
+
+            var resultado = await _userManager.ChangePasswordAsync(usuario, senhaAtual, novaSenha);
+            if (!resultado.Succeeded)
+            {
+                var errors = resultado.Errors.Select(e => e.Description).ToList();
+                if (errors.Contains("Incorrect password."))
+                    return new IdentityResponse("Senha incorreta.");
+                else
+                    return new IdentityResponse("Não foi possível alterar a senha. Tente novamente mais tarde.");
+            }
+
+            return new IdentityResponse(true);
+        }
+
+        public async Task<IdentityResponse> RemoverUsuario(string email)
+        {
+            var usuario = await _userManager.FindByEmailAsync(email);
+            if (usuario == null)
+                return new IdentityResponse("Usuário não encontrado.");
+
+            var resultado = await _userManager.DeleteAsync(usuario);
+            if (!resultado.Succeeded)
+            {
+                var errors = resultado.Errors.Select(e => e.Description).ToList();
+                return new IdentityResponse(false, errors);
+            }
+
+            return new IdentityResponse(true);
         }
 
         #region PRIVATE
@@ -92,17 +128,17 @@ namespace FCG.Infra.Security.Services
             return new JwtSecurityTokenHandler().WriteToken(jwt);
         }
 
-        private async Task<IList<Claim>> ObterClaims(IdentityUser user, bool adicionarClaimsUsuario)
+        private async Task<IList<Claim>> ObterClaims(IdentityCustomUser user, bool adicionarClaimsUsuario)
         {
-            var claims = new List<Claim>();
-
-            claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Name, user.UserName));
-            claims.Add(new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.Now.ToUnixTimeSeconds().ToString()));
+            var claims = new List<Claim>
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Nome),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Nbf, DateTime.Now.ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.Now.ToUnixTimeSeconds().ToString())
+            };
 
             if (adicionarClaimsUsuario)
             {

@@ -18,7 +18,7 @@ namespace FCG.Infra.Data.Mappings
 
             builder.Property(p => p.Nome)
                 .IsRequired(true)
-                .HasColumnType("varchar(255)");
+                .HasColumnType("varchar(256)");
 
             builder.Property(p => p.Email)
                 .IsRequired(true)

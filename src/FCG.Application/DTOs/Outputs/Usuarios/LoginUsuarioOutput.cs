@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FCG.Application.DTOs.Outputs
+namespace FCG.Application.DTOs.Outputs.Usuarios
 {
     public class LoginUsuarioOutput
     {

@@ -22,7 +22,7 @@ namespace FCG.Application.Security
 
         public string? Email => User?.FindFirst(ClaimTypes.Email)?.Value;
 
-        public string? Nome => User?.Identity?.Name;
+        public string? Nome => User?.FindFirst(ClaimTypes.Name)?.Value;
 
         public List<string> Roles => User?
             .FindAll(ClaimTypes.Role)

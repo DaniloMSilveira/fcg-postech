@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using FCG.Application.DTOs.Inputs;
+using FCG.Application.DTOs.Inputs.Usuarios;
 using FCG.Application.Services;
 using FCG.Infra.Security.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -12,51 +13,88 @@ namespace FCG.API.Controllers
     public class UsuarioController : Controller
     {
         private readonly ILogger<UsuarioController> _logger;
-        private readonly IUsuarioAppService _service;
+        private readonly IUsuarioAppService _usuarioAppService;
 
         public UsuarioController(ILogger<UsuarioController> logger,
-            IUsuarioAppService service)
+            IUsuarioAppService usuarioAppService)
         {
             _logger = logger;
-            _service = service;
+            _usuarioAppService = usuarioAppService;
         }
 
-        [AllowAnonymous]
-        [HttpPost("cadastrar", Name = "CadastrarUsuario")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> CadastrarUsuario([FromBody] CadastrarUsuarioInput input)
-        {
-            var resultado = await _service.Cadastrar(input);
-
-            return !resultado.Success ? BadRequest(resultado) : Created();
-        }
+        #region Autenticação
 
         [AllowAnonymous]
-        [HttpPost("login", Name = "LoginUsuario")]
+        [HttpPost("autenticacao/registrar", Name = "RegistrarUsuario")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> LoginUsuario([FromBody] LoginUsuarioInput input)
+        public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioInput input)
         {
-            var resultado = await _service.Login(input);
+            var resultado = await _usuarioAppService.Registrar(input);
 
             return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
         }
 
-        [HttpGet("perfil", Name = "ObterPerfilUsuario")]
+        [AllowAnonymous]
+        [HttpPost("autenticacao/login", Name = "LoginUsuario")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> LoginUsuario([FromBody] LoginUsuarioInput input)
+        {
+            var resultado = await _usuarioAppService.Login(input);
+
+            return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
+        }
+
+        [HttpGet("autenticacao/perfil", Name = "ObterPerfilUsuario")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ObterPerfilUsuario()
         {
-            var perfil = _service.ObterPerfil();
+            var perfil = _usuarioAppService.ObterPerfil();
             return Ok(perfil);
         }
+
+        [HttpPatch("autenticacao/alterar-senha", Name = "AlterarSenhaUsuario")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AlterarSenhaUsuario([FromBody] AlterarSenhaInput input)
+        {
+            var resultado = await _usuarioAppService.AlterarSenha(input);
+
+            return !resultado.Success ? BadRequest(resultado) : NoContent();
+        }
+
+        #endregion
+
+        #region Gerenciamento Usuarios
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpGet("{id}", Name = "ObterUsuario")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ObterUsuario([FromRoute] Guid id)
         {
-            var usuario = await _service.ObterPorId(id);
+            var usuario = await _usuarioAppService.ObterPorId(id);
 
             return usuario is null ? NotFound() : Ok(usuario);
         }
+
+        [Authorize(Roles = Roles.ADMINISTRADOR)]
+        [HttpPost(Name = "CriarUsuario")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> CriarUsuario([FromBody] CriarUsuarioInput input)
+        {
+            var resultado = await _usuarioAppService.Criar(input);
+
+            return resultado is null ? BadRequest(resultado) : Ok(resultado.Data);
+        }
+
+        [Authorize(Roles = Roles.ADMINISTRADOR)]
+        [HttpDelete("{id}", Name = "RemoverUsuario")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> RemoverUsuario([FromRoute] Guid id)
+        {
+            var resultado = await _usuarioAppService.Remover(id);
+
+            return !resultado.Success ? BadRequest(resultado) : NoContent();
+        }
+
+        #endregion
     }
 }

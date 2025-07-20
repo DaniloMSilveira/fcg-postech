@@ -8,7 +8,9 @@ namespace FCG.Infra.Security.Services
 {
     public interface IIdentityService
     {
-        Task<IdentityRegisterResponse> CadastrarUsuario(string email, string senha);
         Task<IdentityTokenResponse> Login(string email, string senha);
+        Task<IdentityResponse> CriarUsuario(string nome, string email, string senha);
+        Task<IdentityResponse> AlterarSenha(string email, string senhaAtual, string novaSenha);
+        Task<IdentityResponse> RemoverUsuario(string email);
     }
 }

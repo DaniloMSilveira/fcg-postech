@@ -5,38 +5,38 @@ using System.Threading.Tasks;
 using FCG.Domain.Helpers;
 using FluentValidation;
 
-namespace FCG.Application.DTOs.Inputs
+namespace FCG.Application.DTOs.Inputs.Usuarios
 {
-    public class CadastrarUsuarioInput : BaseInput<CadastrarUsuarioInput>
+    public class RegistrarUsuarioInput : BaseInput<RegistrarUsuarioInput>
     {
         public string? Nome { get; private set; }
         public string? Email { get; private set; }
         public string? Senha { get; private set; }
 
-        public CadastrarUsuarioInput(string nome, string email, string senha)
+        public RegistrarUsuarioInput(string nome, string email, string senha)
         {
             Nome = nome;
             Email = email;
             Senha = senha;
         }
 
-        protected override IValidator<CadastrarUsuarioInput> GetValidator()
+        protected override IValidator<RegistrarUsuarioInput> GetValidator()
         {
-            return new CadastrarUsuarioInputValidator();
+            return new RegistrarUsuarioInputValidator();
         }
     }
 
-    public class CadastrarUsuarioInputValidator : AbstractValidator<CadastrarUsuarioInput>
+    public class RegistrarUsuarioInputValidator : AbstractValidator<RegistrarUsuarioInput>
     {
-        public CadastrarUsuarioInputValidator()
+        public RegistrarUsuarioInputValidator()
         {
             RuleFor(p => p.Nome)
                 .NotEmpty()
                 .WithMessage("Nome é um campo obrigatório.");
 
             RuleFor(p => p.Nome)
-                .MaximumLength(255)
-                .WithMessage("Nome deve ter até 255 caracteres.")
+                .MaximumLength(256)
+                .WithMessage("Nome deve ter até 256 caracteres.")
                 .When(p => !string.IsNullOrWhiteSpace(p.Nome));
 
             RuleFor(p => p.Email)

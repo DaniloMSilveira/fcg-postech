@@ -16,6 +16,7 @@ using LoginUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Applicati
 using CriarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.CriarUsuarioOutput>;
 using RemoverUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 using AlterarSenhaResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
+using FCG.Application.DTOs.Queries;
 
 namespace FCG.Application.Services
 {
@@ -97,6 +98,22 @@ namespace FCG.Application.Services
                 return AlterarSenhaResult.Fail(identityResponse.Errors);
 
             return AlterarSenhaResult.Ok();
+        }
+
+        public async Task<PaginacaoOutput<UsuarioItemListaOutput>> PesquisarUsuarios(PesquisarUsuariosQuery query)
+        {
+            var (usuarios, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.Filtro);
+
+            var dados = usuarios.Select(p => new UsuarioItemListaOutput(p.Id, p.Nome, p.Email));
+
+            return new PaginacaoOutput<UsuarioItemListaOutput>
+            {
+                PaginaAtual = query.Pagina,
+                TamanhoPagina = query.TamanhoPagina,
+                TotalRegistros = total,
+                TotalPaginas = (int)Math.Ceiling((double)total / query.TamanhoPagina),
+                Dados = dados.ToList()
+            };
         }
 
         public async Task<UsuarioOutput?> ObterPorId(Guid id)

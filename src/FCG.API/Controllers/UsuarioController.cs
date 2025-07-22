@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using FCG.Application.DTOs.Inputs;
 using FCG.Application.DTOs.Inputs.Usuarios;
+using FCG.Application.DTOs.Queries;
 using FCG.Application.Services;
 using FCG.Infra.Security.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -66,6 +67,19 @@ namespace FCG.API.Controllers
         #region Gerenciamento Usuarios
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
+        [HttpGet("pesquisa", Name = "PesquisarUsuarios")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> PesquisarUsuarios([FromQuery] PesquisarUsuariosQuery query)
+        {
+            if (query.Pagina <= 0 || query.TamanhoPagina <= 0)
+                return BadRequest(new { error = "Parâmetros inválidos." });
+
+            var resultado = await _usuarioAppService.PesquisarUsuarios(query);
+
+            return Ok(resultado);
+        }
+
+        [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpGet("{id}", Name = "ObterUsuario")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ObterUsuario([FromRoute] Guid id)
@@ -82,7 +96,7 @@ namespace FCG.API.Controllers
         {
             var resultado = await _usuarioAppService.Criar(input);
 
-            return resultado is null ? BadRequest(resultado) : Ok(resultado.Data);
+            return !resultado.Success ? BadRequest(resultado)  : Ok(resultado.Data);
         }
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]

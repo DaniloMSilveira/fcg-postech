@@ -34,6 +34,7 @@ namespace FCG.Infra.Data.Contexts
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UsuarioMap());
+            modelBuilder.ApplyConfiguration(new JogoMap());
             base.OnModelCreating(modelBuilder);
         }
     }

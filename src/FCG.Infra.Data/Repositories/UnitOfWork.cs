@@ -11,11 +11,15 @@ namespace FCG.Infra.Data.Repositories
     {
         private readonly FCGDataContext _context;
         public IUsuarioRepository UsuarioRepository { get; }
+        public IJogoRepository JogoRepository { get; }
 
-        public UnitOfWork(FCGDataContext context, IUsuarioRepository usuarioRepository)
+        public UnitOfWork(FCGDataContext context,
+            IUsuarioRepository usuarioRepository,
+            IJogoRepository jogoRepository)
         {
             _context = context;
             UsuarioRepository = usuarioRepository;
+            JogoRepository = jogoRepository;
         }
 
         public async Task<bool> Commit()

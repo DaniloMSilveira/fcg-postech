@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FCG.Application.DTOs.Inputs.Usuarios;
 using FCG.Application.DTOs.Outputs.Usuarios;
 using FCG.Application.DTOs.Outputs;
-using FCG.Application.DTOs.Queries;
+using FCG.Application.DTOs.Queries.Usuarios;
 
 namespace FCG.Application.Services
 {

@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using FCG.Application.DTOs.Inputs;
 using FCG.Application.DTOs.Inputs.Usuarios;
-using FCG.Application.DTOs.Queries;
+using FCG.Application.DTOs.Queries.Usuarios;
 using FCG.Application.Services;
 using FCG.Infra.Security.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FCG.API.Controllers
 {
     [Authorize(Roles = Roles.USUARIO)]
-    [Route("usuario")]
+    [Route("usuarios")]
     public class UsuarioController : Controller
     {
         private readonly ILogger<UsuarioController> _logger;
@@ -67,7 +67,7 @@ namespace FCG.API.Controllers
         #region Gerenciamento Usuarios
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
-        [HttpGet("pesquisa", Name = "PesquisarUsuarios")]
+        [HttpGet("pesquisar", Name = "PesquisarUsuarios")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> PesquisarUsuarios([FromQuery] PesquisarUsuariosQuery query)
         {

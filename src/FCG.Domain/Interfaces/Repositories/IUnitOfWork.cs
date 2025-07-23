@@ -8,6 +8,7 @@ namespace FCG.Domain.Interfaces.Repositories
     public interface IUnitOfWork : IDisposable
     {
         IUsuarioRepository UsuarioRepository { get; }
+        IJogoRepository JogoRepository { get; }
         Task<bool> Commit();
     }
 }

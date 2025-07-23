@@ -36,7 +36,7 @@ namespace FCG.Domain.Entities
             CriadoEm = DateTime.Now;
         }
 
-        public void Atualizar(string nome,
+        public void Alterar(string nome,
             string? descricao,
             string? desenvolvedora,
             DateTime? dataLancamento,

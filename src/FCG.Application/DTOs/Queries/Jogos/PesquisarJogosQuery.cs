@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FluentValidation;
 
-namespace FCG.Application.DTOs.Queries
+namespace FCG.Application.DTOs.Queries.Jogos
 {
-    public class PesquisarUsuariosQuery
+    public class PesquisarJogosQuery
     {
         public int Pagina { get; set; }
         public int TamanhoPagina { get; set; }

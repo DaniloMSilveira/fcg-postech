@@ -6,6 +6,7 @@ using System.Transactions;
 using FCG.Application.DTOs.Inputs.Usuarios;
 using FCG.Application.DTOs.Outputs.Usuarios;
 using FCG.Application.DTOs.Outputs;
+using FCG.Application.DTOs.Queries.Usuarios;
 using FCG.Application.Security;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Repositories;

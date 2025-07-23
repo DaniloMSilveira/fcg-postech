@@ -21,6 +21,7 @@ namespace FCG.Infra.Data.Contexts
         }
 
         public DbSet<Usuario> Usuarios { get; set; }
+        public DbSet<Jogo> Jogos { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

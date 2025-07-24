@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation.Results;
 
-namespace FCG.Application.DTOs.Outputs.Usuarios
+namespace FCG.Application.DTOs.Outputs.Autenticacao
 {
     public class RegistrarUsuarioOutput
     {

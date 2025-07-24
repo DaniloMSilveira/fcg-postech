@@ -11,10 +11,6 @@ namespace FCG.Application.Services
 {
     public interface IUsuarioAppService
     {
-        Task<BaseOutput<RegistrarUsuarioOutput>> Registrar(RegistrarUsuarioInput input);
-        Task<BaseOutput<LoginUsuarioOutput>> Login(LoginUsuarioInput input);
-        PerfilUsuarioOutput ObterPerfil();
-        Task<BaseOutput<bool>> AlterarSenha(AlterarSenhaInput input);
         Task<PaginacaoOutput<UsuarioItemListaOutput>> PesquisarUsuarios(PesquisarUsuariosQuery query);
         Task<UsuarioOutput?> ObterPorId(Guid id);
         Task<BaseOutput<CriarUsuarioOutput>> Criar(CriarUsuarioInput input);

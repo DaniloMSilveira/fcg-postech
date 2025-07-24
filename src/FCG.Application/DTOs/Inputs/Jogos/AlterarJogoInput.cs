@@ -21,14 +21,14 @@ namespace FCG.Application.DTOs.Inputs.Jogos
             string? desenvolvedora,
             DateTime? dataLancamento,
             decimal preco,
-            bool? ativo)
+            bool ativo)
         {
             Nome = nome;
             Descricao = descricao;
             Desenvolvedora = desenvolvedora;
             DataLancamento = dataLancamento;
             Preco = preco;
-            Ativo = ativo ?? true;
+            Ativo = ativo;
         }
 
         public void PreencherId(Guid id)

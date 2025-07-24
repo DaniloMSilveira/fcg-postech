@@ -17,7 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -28,10 +32,12 @@ builder.Services.AddScoped<IIdentityService, IdentityService>();
 builder.Services.AddDbContext<FCGDataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FCG")));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+builder.Services.AddScoped<IAutenticacaoAppService, AutenticacaoAppService>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioAppService, UsuarioAppService>();
 
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
+builder.Services.AddScoped<IJogoAppService, JogoAppService>();
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();

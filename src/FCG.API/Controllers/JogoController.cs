@@ -24,7 +24,7 @@ namespace FCG.API.Controllers
             _jogoAppService = jogoAppService;
         }
 
-        [HttpGet("pesquisa", Name = "PesquisarJogos")]
+        [HttpGet("pesquisar", Name = "PesquisarJogos")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> PesquisarJogos([FromQuery] PesquisarJogosQuery query)
         {
@@ -56,17 +56,18 @@ namespace FCG.API.Controllers
         }
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
-        [HttpPost(Name = "AlterarJogo")]
+        [HttpPut("{id}", Name = "AlterarJogo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AlterarJogo([FromBody] AlterarJogoInput input)
+        public async Task<IActionResult> AlterarJogo([FromRoute] Guid id, [FromBody] AlterarJogoInput input)
         {
+            input.PreencherId(id);
             var resultado = await _jogoAppService.Alterar(input);
 
             return !resultado.Success ? BadRequest(resultado)  : Ok(resultado.Data);
         }
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
-        [HttpPatch("ativar", Name = "AtivarJogo")]
+        [HttpPatch("{id}/ativar", Name = "AtivarJogo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AtivarJogo([FromRoute] Guid id)
         {
@@ -76,7 +77,7 @@ namespace FCG.API.Controllers
         }
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
-        [HttpPatch("inativar", Name = "InativarJogo")]
+        [HttpPatch("{id}/inativar", Name = "InativarJogo")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> InativarJogo([FromRoute] Guid id)
         {

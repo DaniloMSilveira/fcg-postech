@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using FCG.Domain.Helpers;
 using FluentValidation;
 
-namespace FCG.Application.DTOs.Inputs.Usuarios
+namespace FCG.Application.DTOs.Inputs.Autenticacao
 {
     public class RegistrarUsuarioInput : BaseInput<RegistrarUsuarioInput>
     {

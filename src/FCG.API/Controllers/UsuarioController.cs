@@ -23,49 +23,6 @@ namespace FCG.API.Controllers
             _usuarioAppService = usuarioAppService;
         }
 
-        #region Autenticação
-
-        [AllowAnonymous]
-        [HttpPost("autenticacao/registrar", Name = "RegistrarUsuario")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> RegistrarUsuario([FromBody] RegistrarUsuarioInput input)
-        {
-            var resultado = await _usuarioAppService.Registrar(input);
-
-            return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
-        }
-
-        [AllowAnonymous]
-        [HttpPost("autenticacao/login", Name = "LoginUsuario")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> LoginUsuario([FromBody] LoginUsuarioInput input)
-        {
-            var resultado = await _usuarioAppService.Login(input);
-
-            return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
-        }
-
-        [HttpGet("autenticacao/perfil", Name = "ObterPerfilUsuario")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> ObterPerfilUsuario()
-        {
-            var perfil = _usuarioAppService.ObterPerfil();
-            return Ok(perfil);
-        }
-
-        [HttpPatch("autenticacao/alterar-senha", Name = "AlterarSenhaUsuario")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> AlterarSenhaUsuario([FromBody] AlterarSenhaInput input)
-        {
-            var resultado = await _usuarioAppService.AlterarSenha(input);
-
-            return !resultado.Success ? BadRequest(resultado) : NoContent();
-        }
-
-        #endregion
-
-        #region Gerenciamento Usuarios
-
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpGet("pesquisar", Name = "PesquisarUsuarios")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -108,7 +65,5 @@ namespace FCG.API.Controllers
 
             return !resultado.Success ? BadRequest(resultado) : NoContent();
         }
-
-        #endregion
     }
 }

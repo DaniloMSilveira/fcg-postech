@@ -75,7 +75,7 @@ namespace FCG.Application.DTOs.Inputs.Jogos
 
             RuleFor(p => p.Preco)
                 .GreaterThanOrEqualTo(0)
-                .WithMessage("Preco precisa ser maior ou igual a zero.");
+                .WithMessage("Preco deve ser maior ou igual a zero.");
         }
     }
 }

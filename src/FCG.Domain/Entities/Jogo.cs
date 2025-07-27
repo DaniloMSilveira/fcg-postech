@@ -17,6 +17,9 @@ namespace FCG.Domain.Entities
         public DateTime CriadoEm { get; private set; }
         public DateTime? ModificadoEm { get; private set; }
 
+        private readonly List<UsuarioJogo> _usuarios = new();
+        public IReadOnlyCollection<UsuarioJogo> Usuarios => _usuarios.AsReadOnly();
+
         protected Jogo() { }
 
         public Jogo(string nome,

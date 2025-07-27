@@ -9,6 +9,7 @@ using FCG.Domain.Interfaces.Repositories;
 using FCG.Infra.Security.Services;
 
 using CriarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.CriarUsuarioOutput>;
+using AdicionarJogoBibliotecaUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.UsuarioJogoOutput>;
 using RemoverUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 
 namespace FCG.Application.Services
@@ -16,16 +17,22 @@ namespace FCG.Application.Services
     public class UsuarioAppService : IUsuarioAppService
     {
         private readonly IUsuarioRepository _repository;
+        private readonly IJogoRepository _jogoRepository;
+        private readonly IPromocaoRepository _promocaoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityService _identityService;
         private readonly IUserContext _userContext;
 
         public UsuarioAppService(IUsuarioRepository repository,
+            IJogoRepository jogoRepository,
+            IPromocaoRepository promocaoRepository,
             IUnitOfWork unitOfWork,
             IIdentityService identityService,
             IUserContext userContext)
         {
             _repository = repository;
+            _jogoRepository = jogoRepository;
+            _promocaoRepository = promocaoRepository;
             _unitOfWork = unitOfWork;
             _identityService = identityService;
             _userContext = userContext;
@@ -105,5 +112,61 @@ namespace FCG.Application.Services
             }
 
         }
+
+        #region Biblioteca
+
+        public async Task<IEnumerable<UsuarioJogoOutput>> ObterBibliotecaUsuario()
+        {
+            var usuario = await _repository.ObterUsuarioPorEmail(_userContext.Email);
+            if (usuario is null)
+                throw new Exception("Não foi possível obter o usuário no domínio.");
+
+            var jogos = await _repository.ObterJogosUsuario(usuario.Id);
+
+            return jogos.Select(item => new UsuarioJogoOutput
+            {
+                Id = item.Id,
+                JogoId = item.Jogo.Id,
+                JogoNome = item.Jogo.Nome
+            });
+        }
+
+        public async Task<BaseOutput<UsuarioJogoOutput>> AdicionarJogoBibliotecaUsuario(AdicionarJogoBibliotecaInput input)
+        {
+            if (!input.IsValid())
+                return AdicionarJogoBibliotecaUsuarioResult.Fail(input.ValidationResult);
+
+            var usuario = await _repository.ObterPorId(input.UsuarioId);
+            if (usuario is null)
+                return AdicionarJogoBibliotecaUsuarioResult.Fail("Usuário não encontrado.");
+
+            var jogo = await _jogoRepository.ObterPorId(input.JogoId);
+            if (jogo is null)
+                return AdicionarJogoBibliotecaUsuarioResult.Fail("Jogo não encontrado.");
+
+            if (input.PromocaoId is not null)
+            {
+                var promocao = await _promocaoRepository.ObterPorId((Guid)input.PromocaoId);
+                if (promocao is null)
+                    return AdicionarJogoBibliotecaUsuarioResult.Fail("Promoção não encontrada.");
+            }
+
+            var usuarioJogo = new UsuarioJogo(usuario.Id, jogo.Id, input.PrecoCompra, input.PromocaoId);
+            usuario.AdicionarJogo(usuarioJogo);
+            _unitOfWork.UsuarioRepository.Remover(usuario);
+
+            var success = await _unitOfWork.Commit();
+            if (!success)
+                throw new Exception("Erro ao remover usuário no domínio.");
+
+            return AdicionarJogoBibliotecaUsuarioResult.Ok(new UsuarioJogoOutput
+            {
+                Id = usuarioJogo.Id,
+                JogoId = usuarioJogo.JogoId,
+                JogoNome = jogo.Nome
+            });
+        }
+
+        #endregion
     }
 }

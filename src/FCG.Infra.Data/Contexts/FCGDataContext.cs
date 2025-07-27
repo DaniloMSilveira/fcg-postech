@@ -22,6 +22,8 @@ namespace FCG.Infra.Data.Contexts
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Jogo> Jogos { get; set; }
+        public DbSet<UsuarioJogo> UsuarioJogos { get; set; }
+        public DbSet<Promocao> Promocoes { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +38,8 @@ namespace FCG.Infra.Data.Contexts
         {
             modelBuilder.ApplyConfiguration(new UsuarioMap());
             modelBuilder.ApplyConfiguration(new JogoMap());
+            modelBuilder.ApplyConfiguration(new UsuarioJogoMap());
+            modelBuilder.ApplyConfiguration(new PromocaoMap());
             base.OnModelCreating(modelBuilder);
         }
     }

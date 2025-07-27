@@ -1,3 +1,5 @@
+using FCG.Domain.Exceptions;
+
 namespace FCG.Domain.Entities
 {
     public class Usuario : IEntity, IAggregateRoot
@@ -7,6 +9,9 @@ namespace FCG.Domain.Entities
         public string Email { get; private set; }
         public DateTime CriadoEm { get; private set; }
         public DateTime? ModificadoEm { get; private set; }
+
+        private readonly List<UsuarioJogo> _jogos = new();
+        public IReadOnlyCollection<UsuarioJogo> Jogos => _jogos.AsReadOnly();
 
         protected Usuario() { }
 
@@ -22,6 +27,23 @@ namespace FCG.Domain.Entities
         {
             Nome = nome;
             ModificadoEm = DateTime.Now;
+        }
+
+        public void AdicionarJogo(UsuarioJogo usuarioJogo)
+        {
+            if (_jogos.Any(x => x.JogoId == usuarioJogo.JogoId))
+                throw new DomainException("Usuário já possui este jogo.");
+
+            _jogos.Add(usuarioJogo);
+        }
+
+        public void RemoverJogo(Guid jogoId)
+        {
+            var jogo = _jogos.FirstOrDefault(uj => uj.JogoId == jogoId);
+            if (jogo is null)
+                throw new DomainException("Usuário não possui este jogo.");
+
+            _jogos.Remove(jogo);
         }
     }
 }

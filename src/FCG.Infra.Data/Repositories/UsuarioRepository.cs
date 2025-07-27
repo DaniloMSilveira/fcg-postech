@@ -18,14 +18,15 @@ namespace FCG.Infra.Data.Repositories
         public async Task<(IEnumerable<Usuario>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro)
         {
             filtro = filtro?.ToLower();
-            var query = _context.Usuarios.AsNoTracking();
-
-            var total = await query.CountAsync();
-            var usuarios = await query
+            var query = _context.Usuarios
+                .AsNoTracking()
                 .Where(p =>
                     string.IsNullOrEmpty(filtro)
                     || (!string.IsNullOrEmpty(filtro) && (p.Nome.ToLower().Contains(filtro) || p.Email.ToLower().Contains(filtro)))
-                )
+                );
+
+            var total = await query.CountAsync();
+            var usuarios = await query
                 .Skip((pagina - 1) * tamanhoPagina)
                 .Take(tamanhoPagina)
                 .ToListAsync();
@@ -33,9 +34,28 @@ namespace FCG.Infra.Data.Repositories
             return (usuarios, total);
         }
 
+        public async Task<Usuario?> ObterUsuarioPorEmail(string email)
+        {
+            return await _context.Usuarios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(e => e.Email == email);
+        }
+
         public async Task<bool> ExisteUsuario(string email)
         {
             return await _context.Usuarios.AnyAsync(e => e.Email == email);
         }
+
+        #region Biblioteca
+
+        public async Task<IEnumerable<UsuarioJogo>> ObterJogosUsuario(Guid id)
+        {
+            return _context.UsuarioJogos
+                .AsNoTracking()
+                .Include(p => p.Jogo)
+                .Where(p => p.UsuarioId == id);
+        }
+
+        #endregion
     }
 }

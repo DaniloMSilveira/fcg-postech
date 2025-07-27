@@ -6,7 +6,7 @@ using FCG.Domain.Entities;
 
 namespace FCG.Domain.Interfaces.Repositories
 {
-    public interface IRepository<T> where T : class, IAggregateRoot
+    public interface IRepository<T> where T : class, IEntity
     {
         Task<T?> ObterPorId(Guid id);
         Task<IEnumerable<T>> ObterTodos();

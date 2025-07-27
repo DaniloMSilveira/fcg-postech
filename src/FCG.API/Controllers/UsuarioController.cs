@@ -2,6 +2,7 @@ using System.Security.Claims;
 using FCG.Application.DTOs.Inputs;
 using FCG.Application.DTOs.Inputs.Usuarios;
 using FCG.Application.DTOs.Queries.Usuarios;
+using FCG.Application.Security;
 using FCG.Application.Services;
 using FCG.Infra.Security.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -53,7 +54,7 @@ namespace FCG.API.Controllers
         {
             var resultado = await _usuarioAppService.Criar(input);
 
-            return !resultado.Success ? BadRequest(resultado)  : Ok(resultado.Data);
+            return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
         }
 
         [Authorize(Roles = Roles.ADMINISTRADOR)]
@@ -65,5 +66,27 @@ namespace FCG.API.Controllers
 
             return !resultado.Success ? BadRequest(resultado) : NoContent();
         }
+
+        #region Biblioteca
+
+        [HttpGet("biblioteca", Name = "ObterBibliotecaUsuario")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ObterBibliotecaUsuario()
+        {
+            var resultado = await _usuarioAppService.ObterBibliotecaUsuario();
+
+            return Ok(resultado);
+        }
+
+        [HttpPost("biblioteca", Name = "AdicionarJogoBibliotecaUsuario")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AdicionarJogoBibliotecaUsuario([FromBody] AdicionarJogoBibliotecaInput input)
+        {
+            var resultado = await _usuarioAppService.AdicionarJogoBibliotecaUsuario(input);
+
+            return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
+        }
+
+        #endregion
     }
 }

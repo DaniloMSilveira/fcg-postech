@@ -39,6 +39,9 @@ builder.Services.AddScoped<IUsuarioAppService, UsuarioAppService>();
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
 builder.Services.AddScoped<IJogoAppService, JogoAppService>();
 
+builder.Services.AddScoped<IPromocaoRepository, PromocaoRepository>();
+builder.Services.AddScoped<IPromocaoAppService, PromocaoAppService>();
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 

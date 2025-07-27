@@ -15,5 +15,12 @@ namespace FCG.Application.Services
         Task<UsuarioOutput?> ObterPorId(Guid id);
         Task<BaseOutput<CriarUsuarioOutput>> Criar(CriarUsuarioInput input);
         Task<BaseOutput<bool>> Remover(Guid id);
+
+        #region Biblioteca
+
+        Task<IEnumerable<UsuarioJogoOutput>> ObterBibliotecaUsuario();
+        Task<BaseOutput<UsuarioJogoOutput>> AdicionarJogoBibliotecaUsuario(AdicionarJogoBibliotecaInput input);
+
+        #endregion
     }
 }

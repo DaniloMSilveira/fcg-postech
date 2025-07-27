@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FCG.Infra.Data.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class, IAggregateRoot
+    public class Repository<T> : IRepository<T> where T : class, IEntity
     {
         protected readonly FCGDataContext _context;
         protected readonly DbSet<T> _dbSet;

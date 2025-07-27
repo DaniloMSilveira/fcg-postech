@@ -9,6 +9,13 @@ namespace FCG.Domain.Interfaces.Repositories
     public interface IUsuarioRepository : IRepository<Usuario>
     {
         Task<(IEnumerable<Usuario>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro);
+        Task<Usuario?> ObterUsuarioPorEmail(string email);
         Task<bool> ExisteUsuario(string email);
+
+        #region Biblioteca
+
+        Task<IEnumerable<UsuarioJogo>> ObterJogosUsuario(Guid id);
+
+        #endregion
     }
 }

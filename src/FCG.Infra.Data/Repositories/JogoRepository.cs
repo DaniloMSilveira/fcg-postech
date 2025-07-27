@@ -18,14 +18,15 @@ namespace FCG.Infra.Data.Repositories
         public async Task<(IEnumerable<Jogo>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro)
         {
             filtro = filtro?.ToLower();
-            var query = _context.Jogos.AsNoTracking();
-
-            var total = await query.CountAsync();
-            var jogos = await query
+            var query = _context.Jogos
+                .AsNoTracking()
                 .Where(p =>
                     string.IsNullOrEmpty(filtro)
                     || (!string.IsNullOrEmpty(filtro) && p.Nome.ToLower().Contains(filtro))
-                )
+                );
+
+            var total = await query.CountAsync();
+            var jogos = await query
                 .Skip((pagina - 1) * tamanhoPagina)
                 .Take(tamanhoPagina)
                 .ToListAsync();

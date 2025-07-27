@@ -9,6 +9,7 @@ namespace FCG.Domain.Interfaces.Repositories
     {
         IUsuarioRepository UsuarioRepository { get; }
         IJogoRepository JogoRepository { get; }
+        IPromocaoRepository PromocaoRepository { get; }
         Task<bool> Commit();
     }
 }

@@ -4,6 +4,7 @@ using FCG.Infra.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FCG.Infra.Data.Migrations
 {
     [DbContext(typeof(FCGDataContext))]
-    partial class FCGDataContextModelSnapshot : ModelSnapshot
+    [Migration("20250726165733_CriandoTabelaUsuarioJogo")]
+    partial class CriandoTabelaUsuarioJogo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,40 +59,6 @@ namespace FCG.Infra.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Jogos", (string)null);
-                });
-
-            modelBuilder.Entity("FCG.Domain.Entities.Promocao", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CriadoEm")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime>("DataFim")
-                        .HasColumnType("datetime");
-
-                    b.Property<DateTime>("DataInicio")
-                        .HasColumnType("datetime");
-
-                    b.Property<Guid>("JogoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModificadoEm")
-                        .HasColumnType("datetime");
-
-                    b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JogoId");
-
-                    b.ToTable("Promocoes", (string)null);
                 });
 
             modelBuilder.Entity("FCG.Domain.Entities.Usuario", b =>
@@ -135,9 +104,6 @@ namespace FCG.Infra.Data.Migrations
                     b.Property<decimal>("PrecoCompra")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("PromocaoId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("UsuarioId")
                         .HasColumnType("uniqueidentifier");
 
@@ -145,23 +111,10 @@ namespace FCG.Infra.Data.Migrations
 
                     b.HasIndex("JogoId");
 
-                    b.HasIndex("PromocaoId");
-
                     b.HasIndex("UsuarioId", "JogoId")
                         .IsUnique();
 
                     b.ToTable("UsuarioJogos", (string)null);
-                });
-
-            modelBuilder.Entity("FCG.Domain.Entities.Promocao", b =>
-                {
-                    b.HasOne("FCG.Domain.Entities.Jogo", "Jogo")
-                        .WithMany()
-                        .HasForeignKey("JogoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Jogo");
                 });
 
             modelBuilder.Entity("FCG.Domain.Entities.UsuarioJogo", b =>
@@ -172,10 +125,6 @@ namespace FCG.Infra.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FCG.Domain.Entities.Promocao", "Promocao")
-                        .WithMany()
-                        .HasForeignKey("PromocaoId");
-
                     b.HasOne("FCG.Domain.Entities.Usuario", "Usuario")
                         .WithMany("Jogos")
                         .HasForeignKey("UsuarioId")
@@ -183,8 +132,6 @@ namespace FCG.Infra.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Jogo");
-
-                    b.Navigation("Promocao");
 
                     b.Navigation("Usuario");
                 });

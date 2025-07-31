@@ -121,9 +121,7 @@ namespace FCG.Application.Services
             if (usuario is null)
                 throw new Exception("Não foi possível obter o usuário no domínio.");
 
-            var jogos = await _repository.ObterJogosUsuario(usuario.Id);
-
-            return jogos.Select(item => new UsuarioJogoOutput
+            return usuario.Jogos.Select(item => new UsuarioJogoOutput
             {
                 Id = item.Id,
                 JogoId = item.Jogo.Id,
@@ -136,28 +134,31 @@ namespace FCG.Application.Services
             if (!input.IsValid())
                 return AdicionarJogoBibliotecaUsuarioResult.Fail(input.ValidationResult);
 
-            var usuario = await _repository.ObterPorId(input.UsuarioId);
+            var usuario = await _repository.ObterUsuarioPorEmail(_userContext.Email);
             if (usuario is null)
-                return AdicionarJogoBibliotecaUsuarioResult.Fail("Usuário não encontrado.");
+                throw new Exception("Não foi possível obter o usuário no domínio.");
 
-            var jogo = await _jogoRepository.ObterPorId(input.JogoId);
+            var jogo = await _jogoRepository.ObterJogoPromocoes(input.JogoId);
             if (jogo is null)
                 return AdicionarJogoBibliotecaUsuarioResult.Fail("Jogo não encontrado.");
 
-            if (input.PromocaoId is not null)
-            {
-                var promocao = await _promocaoRepository.ObterPorId((Guid)input.PromocaoId);
-                if (promocao is null)
-                    return AdicionarJogoBibliotecaUsuarioResult.Fail("Promoção não encontrada.");
-            }
+            var usuarioPossuiJogo = usuario.Jogos.Any(p => p.JogoId == jogo.Id);
+            if (usuarioPossuiJogo)
+                return AdicionarJogoBibliotecaUsuarioResult.Fail("Usuário já possui este jogo.");
 
-            var usuarioJogo = new UsuarioJogo(usuario.Id, jogo.Id, input.PrecoCompra, input.PromocaoId);
-            usuario.AdicionarJogo(usuarioJogo);
-            _unitOfWork.UsuarioRepository.Remover(usuario);
+            var dataAtual = DateTime.Now;
+            var promocaoAtiva = jogo.Promocoes.FirstOrDefault(p => p.DataInicio <= dataAtual && p.DataFim >= dataAtual);
+
+            var usuarioJogo = new UsuarioJogo(
+                usuario.Id,
+                jogo.Id,
+                promocaoAtiva is not null ? promocaoAtiva.Preco : jogo.Preco,
+                promocaoAtiva is not null ? promocaoAtiva.Id : null);
+            await _unitOfWork.UsuarioRepository.AdicionarJogoBiblioteca(usuarioJogo);
 
             var success = await _unitOfWork.Commit();
             if (!success)
-                throw new Exception("Erro ao remover usuário no domínio.");
+                throw new Exception("Erro ao adicionar jogo para o usuário no domínio.");
 
             return AdicionarJogoBibliotecaUsuarioResult.Ok(new UsuarioJogoOutput
             {

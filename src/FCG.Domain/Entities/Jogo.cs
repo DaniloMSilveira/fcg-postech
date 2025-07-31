@@ -20,6 +20,9 @@ namespace FCG.Domain.Entities
         private readonly List<UsuarioJogo> _usuarios = new();
         public IReadOnlyCollection<UsuarioJogo> Usuarios => _usuarios.AsReadOnly();
 
+        private readonly List<Promocao> _promocoes = new();
+        public IReadOnlyCollection<Promocao> Promocoes => _promocoes.AsReadOnly();
+
         protected Jogo() { }
 
         public Jogo(string nome,

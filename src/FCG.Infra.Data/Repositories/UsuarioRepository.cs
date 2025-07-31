@@ -38,6 +38,8 @@ namespace FCG.Infra.Data.Repositories
         {
             return await _context.Usuarios
                 .AsNoTracking()
+                .Include(p => p.Jogos)
+                .ThenInclude(p => p.Jogo)
                 .FirstOrDefaultAsync(e => e.Email == email);
         }
 
@@ -46,14 +48,11 @@ namespace FCG.Infra.Data.Repositories
             return await _context.Usuarios.AnyAsync(e => e.Email == email);
         }
 
-        #region Biblioteca
+        #region Biblioteca jogos
 
-        public async Task<IEnumerable<UsuarioJogo>> ObterJogosUsuario(Guid id)
+        public async Task AdicionarJogoBiblioteca(UsuarioJogo jogo)
         {
-            return _context.UsuarioJogos
-                .AsNoTracking()
-                .Include(p => p.Jogo)
-                .Where(p => p.UsuarioId == id);
+            await _context.UsuarioJogos.AddAsync(jogo);
         }
 
         #endregion

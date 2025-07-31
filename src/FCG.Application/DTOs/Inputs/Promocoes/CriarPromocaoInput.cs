@@ -49,14 +49,6 @@ namespace FCG.Application.DTOs.Inputs.Promocoes
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("Preco deve ser maior ou igual a zero.");
 
-            RuleFor(p => p.DataInicio)
-                .GreaterThanOrEqualTo(p => DateTime.Now.Date)
-                .WithMessage("DataInicio deve ser maior ou igual a data atual.");
-
-            RuleFor(p => p.DataFim)
-                .GreaterThanOrEqualTo(p => DateTime.Now.Date)
-                .WithMessage("DataFim deve ser maior ou igual a data atual.");
-
             RuleFor(p => p.DataFim)
                 .GreaterThan(p => p.DataInicio)
                 .WithMessage("DataFim deve ser maior que a data de início.");

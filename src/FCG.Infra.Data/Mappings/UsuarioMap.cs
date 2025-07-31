@@ -16,6 +16,11 @@ namespace FCG.Infra.Data.Mappings
 
             builder.HasKey(p => p.Id);
 
+            builder.HasMany(p => p.Jogos)
+                .WithOne(e => e.Usuario)
+                .HasForeignKey(fk => fk.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             builder.Property(p => p.Nome)
                 .IsRequired(true)
                 .HasColumnType("varchar(256)");

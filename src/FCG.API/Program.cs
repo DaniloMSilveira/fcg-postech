@@ -1,3 +1,4 @@
+using System.Reflection;
 using FCG.API.Extensions;
 using FCG.API.Middlewares;
 using FCG.Application.Security;
@@ -23,7 +24,6 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<IdentityDataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("FCG")));
 builder.Services.AddIdentityAuthentication(builder.Configuration);
@@ -45,6 +45,14 @@ builder.Services.AddScoped<IPromocaoAppService, PromocaoAppService>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IUserContext, UserContext>();
 
+var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+
+builder.Services.AddSwaggerGen(c =>
+{
+    c.IncludeXmlComments(xmlPath);
+});
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -54,8 +62,8 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityCustomUser>>();
     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-    await IdentitySeed.SeedData(userManager, roleManager);
-    await FCGSeed.SeedData(unitOfWork);
+    // await IdentitySeed.SeedData(userManager, roleManager);
+    // await FCGSeed.SeedData(unitOfWork);
 }
 
 // Configure the HTTP request pipeline.

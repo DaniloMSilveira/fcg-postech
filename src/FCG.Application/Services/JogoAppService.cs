@@ -41,7 +41,19 @@ namespace FCG.Application.Services
         {
             var (jogos, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.Filtro);
 
-            var dados = jogos.Select(p => new JogoItemListaOutput(p.Id, p.Nome, p.Preco));
+            var dataAtual = DateTime.Now;
+            var dados = jogos.Select(j =>
+                new JogoItemListaOutput
+                {
+                    Id = j.Id,
+                    Nome = j.Nome,
+                    PrecoOriginal = j.Preco,
+                    PrecoFinal = j.Promocoes
+                        .Where(p => p.DataInicio <= dataAtual && p.DataFim >= dataAtual)
+                        .OrderBy(p => p.DataFim)
+                        .Select(p => (decimal?)p.Preco)
+                        .FirstOrDefault() ?? j.Preco
+                });
 
             return new PaginacaoOutput<JogoItemListaOutput>
             {

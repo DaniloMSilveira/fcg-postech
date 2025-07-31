@@ -13,12 +13,10 @@ namespace FCG.Application.DTOs.Inputs.Promocoes
         public DateTime DataInicio { get; private set; }
         public DateTime DataFim { get; private set; }
 
-        public AlterarPromocaoInput(Guid id,
-            decimal preco,
+        public AlterarPromocaoInput(decimal preco,
             DateTime dataInicio,
             DateTime dataFim)
         {
-            Id = id;
             Preco = preco;
             DataInicio = dataInicio;
             DataFim = dataFim;
@@ -50,14 +48,6 @@ namespace FCG.Application.DTOs.Inputs.Promocoes
             RuleFor(p => p.Preco)
                 .GreaterThanOrEqualTo(0)
                 .WithMessage("Preco deve ser maior ou igual a zero.");
-
-            RuleFor(p => p.DataInicio)
-                .GreaterThanOrEqualTo(p => DateTime.Now.Date)
-                .WithMessage("DataInicio deve ser maior ou igual a data atual.");
-
-            RuleFor(p => p.DataFim)
-                .GreaterThanOrEqualTo(p => DateTime.Now.Date)
-                .WithMessage("DataFim deve ser maior ou igual a data atual.");
 
             RuleFor(p => p.DataFim)
                 .GreaterThan(p => p.DataInicio)

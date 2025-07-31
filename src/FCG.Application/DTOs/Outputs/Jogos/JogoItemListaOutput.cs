@@ -9,13 +9,7 @@ namespace FCG.Application.DTOs.Outputs.Jogos
     {
         public Guid Id { get; set; }
         public string Nome { get; set; }
-        public decimal Preco { get; set; }
-
-        public JogoItemListaOutput(Guid id, string nome, decimal preco)
-        {
-            Id = id;
-            Nome = nome;
-            Preco = preco;
-        }
+        public decimal PrecoOriginal { get; set; }
+        public decimal PrecoFinal { get; set; }
     }
 }

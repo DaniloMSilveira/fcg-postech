@@ -12,9 +12,9 @@ namespace FCG.Domain.Interfaces.Repositories
         Task<Usuario?> ObterUsuarioPorEmail(string email);
         Task<bool> ExisteUsuario(string email);
 
-        #region Biblioteca
+        #region Biblioteca jogos
 
-        Task<IEnumerable<UsuarioJogo>> ObterJogosUsuario(Guid id);
+        Task AdicionarJogoBiblioteca(UsuarioJogo jogo);
 
         #endregion
     }

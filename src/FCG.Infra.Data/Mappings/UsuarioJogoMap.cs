@@ -22,11 +22,13 @@ namespace FCG.Infra.Data.Mappings
 
             builder.HasOne(p => p.Usuario)
                 .WithMany(e => e.Jogos)
-                .HasForeignKey(fk => fk.UsuarioId);
+                .HasForeignKey(fk => fk.UsuarioId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(p => p.Jogo)
                 .WithMany(e => e.Usuarios)
-                .HasForeignKey(fk => fk.JogoId);
+                .HasForeignKey(fk => fk.JogoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Property(p => p.PrecoCompra)
                 .IsRequired(true)

@@ -20,6 +20,7 @@ namespace FCG.Infra.Data.Repositories
             filtro = filtro?.ToLower();
             var query = _context.Jogos
                 .AsNoTracking()
+                .Include(p => p.Promocoes)
                 .Where(p =>
                     string.IsNullOrEmpty(filtro)
                     || (!string.IsNullOrEmpty(filtro) && p.Nome.ToLower().Contains(filtro))
@@ -40,6 +41,14 @@ namespace FCG.Infra.Data.Repositories
                 e.Nome.ToLower() == nome.ToLower()
                 && e.Desenvolvedora == desenvolvedora
                 && e.DataLancamento == dataLancamento);
+        }
+
+        public async Task<Jogo> ObterJogoPromocoes(Guid id)
+        {
+            return await _context.Jogos
+                .AsNoTracking()
+                .Include(p => p.Promocoes)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
     }
 }

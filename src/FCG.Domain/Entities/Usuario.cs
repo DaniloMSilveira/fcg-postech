@@ -28,22 +28,5 @@ namespace FCG.Domain.Entities
             Nome = nome;
             ModificadoEm = DateTime.Now;
         }
-
-        public void AdicionarJogo(UsuarioJogo usuarioJogo)
-        {
-            if (_jogos.Any(x => x.JogoId == usuarioJogo.JogoId))
-                throw new DomainException("Usuário já possui este jogo.");
-
-            _jogos.Add(usuarioJogo);
-        }
-
-        public void RemoverJogo(Guid jogoId)
-        {
-            var jogo = _jogos.FirstOrDefault(uj => uj.JogoId == jogoId);
-            if (jogo is null)
-                throw new DomainException("Usuário não possui este jogo.");
-
-            _jogos.Remove(jogo);
-        }
     }
 }

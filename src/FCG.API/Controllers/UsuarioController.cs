@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FCG.API.Controllers
 {
-    [Authorize(Roles = Roles.USUARIO)]
+    [Authorize]
     [Route("usuarios")]
     public class UsuarioController : Controller
     {
@@ -69,6 +69,7 @@ namespace FCG.API.Controllers
 
         #region Biblioteca
 
+        [Authorize(Roles = Roles.USUARIO)]
         [HttpGet("biblioteca", Name = "ObterBibliotecaUsuario")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> ObterBibliotecaUsuario()
@@ -78,6 +79,7 @@ namespace FCG.API.Controllers
             return Ok(resultado);
         }
 
+        [Authorize(Roles = Roles.USUARIO)]
         [HttpPost("biblioteca", Name = "AdicionarJogoBibliotecaUsuario")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AdicionarJogoBibliotecaUsuario([FromBody] AdicionarJogoBibliotecaInput input)

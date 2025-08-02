@@ -8,7 +8,7 @@ using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Repositories;
 using FCG.Infra.Security.Services;
 
-using CriarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.CriarUsuarioOutput>;
+using CriarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.UsuarioOutput>;
 using AdicionarJogoBibliotecaUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.UsuarioJogoOutput>;
 using RemoverUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 
@@ -63,7 +63,7 @@ namespace FCG.Application.Services
             return new UsuarioOutput(usuario.Id, usuario.Nome, usuario.Email);
         }
 
-        public async Task<BaseOutput<CriarUsuarioOutput>> Criar(CriarUsuarioInput input)
+        public async Task<BaseOutput<UsuarioOutput>> Criar(CriarUsuarioInput input)
         {
             if (!input.IsValid())
                 return CriarUsuarioResult.Fail(input.ValidationResult);
@@ -86,7 +86,7 @@ namespace FCG.Application.Services
                     throw new Exception("Erro ao criar usuário no domínio.");
 
                 scope.Complete();
-                return CriarUsuarioResult.Ok(new CriarUsuarioOutput(usuario.Id));
+                return CriarUsuarioResult.Ok(new UsuarioOutput(usuario.Id, usuario.Nome, usuario.Email));
             }
         }
 

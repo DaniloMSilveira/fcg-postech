@@ -31,14 +31,15 @@ namespace FCG.API.Controllers
         /// Registra um novo usuário no sistema.
         /// </summary>
         /// <remarks>
-        /// Requer um nome, e-mail válido e senha com os critérios definidos pela validação (ex: mínimo de 6 caracteres).
+        /// É necessário informar nome, e-mail válido e uma senha que atenda aos critérios de segurança definidos: 
+        /// mínimo de 8 caracteres, com pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo.
         /// </remarks>
         /// <param name="input">Dados necessários para o registro do usuário.</param>
-        /// <returns>Resultado do registro com os dados do novo usuário ou erros de validação.</returns>
+        /// <response code="201">Usuário registrado com sucesso. Retorna os dados do usuário.</response>
+        /// <response code="400">Requisição inválida.</response>
         [HttpPost("registrar", Name = "Registrar")]
         [ProducesResponseType(typeof(RegistrarUsuarioOutput), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Registrar([FromBody] RegistrarUsuarioInput input)
         {
             var resultado = await _autenticacaoAppService.Registrar(input);
@@ -48,8 +49,18 @@ namespace FCG.API.Controllers
                 : CreatedAtRoute("Registrar", new { id = resultado.Data.Id }, resultado.Data);
         }
 
+        /// <summary>
+        /// Realiza o login de um usuário no sistema.
+        /// </summary>
+        /// <remarks>
+        /// É necessário informar o e-mail e senha válidos do usuário.
+        /// </remarks>
+        /// <param name="input">Credenciais do usuário para autenticação.</param>
+        /// <response code="200">Usuário autenticado com sucesso. Retorna os dados de acesso.</response>
+        /// <response code="400">Requisição inválida ou credenciais incorretas.</response>
         [HttpPost("login", Name = "Login")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(LoginUsuarioOutput), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginUsuarioInput input)
         {
             var resultado = await _autenticacaoAppService.Login(input);
@@ -57,18 +68,37 @@ namespace FCG.API.Controllers
             return !resultado.Success ? BadRequest(resultado) : Ok(resultado.Data);
         }
 
+        /// <summary>
+        /// Obtém o perfil do usuário autenticado no sistema.
+        /// </summary>
+        /// <remarks>
+        /// O usuário deve estar autenticado para realizar esta operação.
+        /// </remarks>
+        /// <response code="200">Retorna os dados do usuário autenticado e suas roles de acesso.</response>
         [Authorize]
         [HttpGet("perfil", Name = "ObterPerfil")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(PerfilUsuarioOutput), StatusCodes.Status200OK)]
         public async Task<IActionResult> ObterPerfil()
         {
             var perfil = _autenticacaoAppService.ObterPerfil();
             return Ok(perfil);
         }
 
+        /// <summary>
+        /// Altera a senha do usuário autenticado.
+        /// </summary>
+        /// <remarks>
+        /// O usuário deve estar autenticado para realizar esta operação.  
+        /// É necessário informar a senha atual e a nova senha, que deve atender aos critérios de segurança definidos: 
+        /// mínimo de 8 caracteres, com pelo menos uma letra maiúscula, uma minúscula, um número e um símbolo.
+        /// </remarks>
+        /// <param name="input">Dados necessários para alteração da senha.</param>
+        /// <response code="204">Senha alterada com sucesso.</response>
+        /// <response code="400">Requisição inválida ou senha incorreta.</response>
         [Authorize]
         [HttpPatch("alterar-senha", Name = "AlterarSenha")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaInput input)
         {
             var resultado = await _autenticacaoAppService.AlterarSenha(input);

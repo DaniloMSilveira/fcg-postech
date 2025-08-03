@@ -85,7 +85,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPost(Name = "CriarUsuario")]
         [ProducesResponseType(typeof(UsuarioOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CriarUsuario([FromBody] CriarUsuarioInput input)
         {
             var resultado = await _usuarioAppService.Criar(input);
@@ -108,7 +108,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpDelete("{id}", Name = "RemoverUsuario")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RemoverUsuario([FromRoute] Guid id)
         {
             var resultado = await _usuarioAppService.Remover(id);
@@ -147,7 +147,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.USUARIO)]
         [HttpPost("biblioteca", Name = "AdicionarJogoBibliotecaUsuario")]
         [ProducesResponseType(typeof(UsuarioJogoOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AdicionarJogoBibliotecaUsuario([FromBody] AdicionarJogoBibliotecaInput input)
         {
             var resultado = await _usuarioAppService.AdicionarJogoBibliotecaUsuario(input);

@@ -39,7 +39,7 @@ namespace FCG.API.Controllers
         /// <response code="400">Requisição inválida.</response>
         [HttpPost("registrar", Name = "Registrar")]
         [ProducesResponseType(typeof(RegistrarUsuarioOutput), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Registrar([FromBody] RegistrarUsuarioInput input)
         {
             var resultado = await _autenticacaoAppService.Registrar(input);
@@ -60,7 +60,7 @@ namespace FCG.API.Controllers
         /// <response code="400">Requisição inválida ou credenciais incorretas.</response>
         [HttpPost("login", Name = "Login")]
         [ProducesResponseType(typeof(LoginUsuarioOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Login([FromBody] LoginUsuarioInput input)
         {
             var resultado = await _autenticacaoAppService.Login(input);
@@ -98,7 +98,7 @@ namespace FCG.API.Controllers
         [Authorize]
         [HttpPatch("alterar-senha", Name = "AlterarSenha")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaInput input)
         {
             var resultado = await _autenticacaoAppService.AlterarSenha(input);

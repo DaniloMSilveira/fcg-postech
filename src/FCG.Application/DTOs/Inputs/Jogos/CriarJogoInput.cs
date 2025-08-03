@@ -13,21 +13,18 @@ namespace FCG.Application.DTOs.Inputs.Jogos
         public string? Desenvolvedora { get; private set; }
         public DateTime? DataLancamento { get; private set; }
         public decimal Preco { get; private set; }
-        public bool Ativo { get; private set; }
 
         public CriarJogoInput(string nome,
             string? descricao,
             string? desenvolvedora,
             DateTime? dataLancamento,
-            decimal preco,
-            bool ativo)
+            decimal preco)
         {
             Nome = nome;
             Descricao = descricao;
             Desenvolvedora = desenvolvedora;
             DataLancamento = dataLancamento;
             Preco = preco;
-            Ativo = ativo;
         }
 
         protected override IValidator<CriarJogoInput> GetValidator()

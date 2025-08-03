@@ -44,7 +44,30 @@ namespace FCG.API.Controllers
             if (query.Pagina <= 0 || query.TamanhoPagina <= 0)
                 return BadRequest(new { error = "Parâmetros inválidos." });
 
-            var resultado = await _jogoAppService.PesquisarJogos(query);
+            var resultado = await _jogoAppService.PesquisarJogos(query, true);
+
+            return Ok(resultado);
+        }
+
+        /// <summary>
+        /// Pesquisa jogos no sistema com perfil de administrador.
+        /// </summary>
+        /// <remarks>
+        /// Permite que usuários administradores consultem a lista de todos os jogos disponíveis na plataforma, mesmo que inativos, com suporte à paginação.
+        /// </remarks>
+        /// <param name="query">
+        /// Parâmetros da pesquisa, incluindo número da página e tamanho da página.
+        /// </param>
+        /// <response code="200">Retorna a lista paginada dos jogos encontrados.</response>
+        [Authorize(Roles = Roles.ADMINISTRADOR)]
+        [HttpGet("pesquisar-admin", Name = "PesquisarJogosAdmin")]
+        [ProducesResponseType(typeof(PaginacaoOutput<JogoItemListaOutput>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> PesquisarJogosAdmin([FromQuery] PesquisarJogosQuery query, [FromQuery] bool? ativo)
+        {
+            if (query.Pagina <= 0 || query.TamanhoPagina <= 0)
+                return BadRequest(new { error = "Parâmetros inválidos." });
+
+            var resultado = await _jogoAppService.PesquisarJogos(query, ativo);
 
             return Ok(resultado);
         }
@@ -82,7 +105,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPost(Name = "CriarJogo")]
         [ProducesResponseType(typeof(JogoOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CriarJogo([FromBody] CriarJogoInput input)
         {
             var resultado = await _jogoAppService.Criar(input);
@@ -103,7 +126,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPut("{id}", Name = "AlterarJogo")]
         [ProducesResponseType(typeof(JogoOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AlterarJogo([FromRoute] Guid id, [FromBody] AlterarJogoInput input)
         {
             input.PreencherId(id);
@@ -125,7 +148,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPatch("{id}/ativar", Name = "AtivarJogo")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AtivarJogo([FromRoute] Guid id)
         {
             var resultado = await _jogoAppService.Ativar(id);
@@ -146,7 +169,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPatch("{id}/inativar", Name = "InativarJogo")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> InativarJogo([FromRoute] Guid id)
         {
             var resultado = await _jogoAppService.Inativar(id);
@@ -167,7 +190,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpDelete("{id}", Name = "RemoverJogo")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RemoverJogo([FromRoute] Guid id)
         {
             var resultado = await _jogoAppService.Remover(id);

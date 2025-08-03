@@ -14,7 +14,7 @@ namespace FCG.Application.Services
         Task<PaginacaoOutput<UsuarioItemListaOutput>> PesquisarUsuarios(PesquisarUsuariosQuery query);
         Task<UsuarioOutput?> ObterPorId(Guid id);
         Task<BaseOutput<UsuarioOutput>> Criar(CriarUsuarioInput input);
-        Task<BaseOutput<bool>> Remover(Guid id);
+        Task<BaseOutput> Remover(Guid id);
 
         #region Biblioteca
 

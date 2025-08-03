@@ -12,12 +12,12 @@ namespace FCG.Application.Services
 {
     public interface IJogoAppService
     {
-        Task<PaginacaoOutput<JogoItemListaOutput>> PesquisarJogos(PesquisarJogosQuery query);
+        Task<PaginacaoOutput<JogoItemListaOutput>> PesquisarJogos(PesquisarJogosQuery query, bool? ativo);
         Task<JogoOutput?> ObterPorId(Guid id);
         Task<BaseOutput<JogoOutput>> Criar(CriarJogoInput input);
         Task<BaseOutput<JogoOutput>> Alterar(AlterarJogoInput input);
-        Task<BaseOutput<bool>> Ativar(Guid id);
-        Task<BaseOutput<bool>> Inativar(Guid id);
-        Task<BaseOutput<bool>> Remover(Guid id);
+        Task<BaseOutput> Ativar(Guid id);
+        Task<BaseOutput> Inativar(Guid id);
+        Task<BaseOutput> Remover(Guid id);
     }
 }

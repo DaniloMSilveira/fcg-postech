@@ -11,5 +11,6 @@ namespace FCG.Application.DTOs.Outputs.Jogos
         public string Nome { get; set; }
         public decimal PrecoOriginal { get; set; }
         public decimal PrecoFinal { get; set; }
+        public bool Ativo { get; set; }
     }
 }

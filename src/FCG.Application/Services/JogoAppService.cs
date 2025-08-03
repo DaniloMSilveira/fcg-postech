@@ -12,14 +12,10 @@ using FCG.Application.Security;
 using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Repositories;
 using FCG.Infra.Security.Services;
+using FCG.Domain.Interfaces.Services;
 
 using CriarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Jogos.JogoOutput>;
 using AlterarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Jogos.JogoOutput>;
-using AtivarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using InativarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using RemoverJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using FCG.Domain.Interfaces.Services;
-
 
 namespace FCG.Application.Services
 {
@@ -38,9 +34,9 @@ namespace FCG.Application.Services
             _service = service;
         }
 
-        public async Task<PaginacaoOutput<JogoItemListaOutput>> PesquisarJogos(PesquisarJogosQuery query)
+        public async Task<PaginacaoOutput<JogoItemListaOutput>> PesquisarJogos(PesquisarJogosQuery query, bool? ativo)
         {
-            var (jogos, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.Filtro);
+            var (jogos, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.Filtro, ativo);
 
             var dataAtual = DateTime.Now;
             var dados = jogos.Select(j =>
@@ -53,7 +49,8 @@ namespace FCG.Application.Services
                         .Where(p => p.DataInicio <= dataAtual && p.DataFim >= dataAtual)
                         .OrderBy(p => p.DataFim)
                         .Select(p => (decimal?)p.Preco)
-                        .FirstOrDefault() ?? j.Preco
+                        .FirstOrDefault() ?? j.Preco,
+                    Ativo = j.Ativo
                 });
 
             return new PaginacaoOutput<JogoItemListaOutput>
@@ -88,8 +85,7 @@ namespace FCG.Application.Services
                 input.Descricao,
                 input.Desenvolvedora,
                 input.DataLancamento,
-                input.Preco,
-                input.Ativo);
+                input.Preco);
 
             await _unitOfWork.JogoRepository.Adicionar(jogo);
 
@@ -114,8 +110,7 @@ namespace FCG.Application.Services
                 input.Descricao,
                 input.Desenvolvedora,
                 input.DataLancamento,
-                input.Preco,
-                input.Ativo);
+                input.Preco);
 
             _unitOfWork.JogoRepository.Atualizar(jogo);
 
@@ -126,11 +121,11 @@ namespace FCG.Application.Services
             return AlterarJogoResult.Ok(JogoOutput.FromEntity(jogo));
         }
 
-        public async Task<BaseOutput<bool>> Ativar(Guid id)
+        public async Task<BaseOutput> Ativar(Guid id)
         {
             var jogo = await _repository.ObterPorId(id);
             if (jogo is null)
-                return AtivarJogoResult.Fail("Jogo não encontrado.");
+                return BaseOutput.Fail("Jogo não encontrado.");
 
             jogo.Ativar();
             _unitOfWork.JogoRepository.Atualizar(jogo);
@@ -139,14 +134,14 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao persistir dados no banco.");
 
-            return AtivarJogoResult.Ok();
+            return BaseOutput.Ok();
         }
 
-        public async Task<BaseOutput<bool>> Inativar(Guid id)
+        public async Task<BaseOutput> Inativar(Guid id)
         {
             var jogo = await _repository.ObterPorId(id);
             if (jogo is null)
-                return InativarJogoResult.Fail("Jogo não encontrado.");
+                return BaseOutput.Fail("Jogo não encontrado.");
 
             jogo.Inativar();
             _unitOfWork.JogoRepository.Atualizar(jogo);
@@ -155,14 +150,14 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao persistir dados no banco.");
 
-            return InativarJogoResult.Ok();
+            return BaseOutput.Ok();
         }
 
-        public async Task<BaseOutput<bool>> Remover(Guid id)
+        public async Task<BaseOutput> Remover(Guid id)
         {
             var jogo = await _repository.ObterPorId(id);
             if (jogo is null)
-                return RemoverJogoResult.Fail("Jogo não encontrado.");
+                return BaseOutput.Fail("Jogo não encontrado.");
 
             _unitOfWork.JogoRepository.Remover(jogo);
 
@@ -170,7 +165,7 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao persistir dados no banco.");
 
-            return RemoverJogoResult.Ok();
+            return BaseOutput.Ok();
         }
     }
 }

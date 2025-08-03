@@ -9,8 +9,6 @@ using FCG.Application.DTOs.Inputs.Autenticacao;
 
 using RegistrarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Autenticacao.RegistrarUsuarioOutput>;
 using LoginUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Autenticacao.LoginUsuarioOutput>;
-using RemoverUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using AlterarSenhaResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 
 namespace FCG.Application.Services
 {
@@ -82,16 +80,16 @@ namespace FCG.Application.Services
             };
         }
 
-        public async Task<RemoverUsuarioResult> AlterarSenha(AlterarSenhaInput input)
+        public async Task<BaseOutput> AlterarSenha(AlterarSenhaInput input)
         {
             if (!input.IsValid())
-                return AlterarSenhaResult.Fail(input.ValidationResult);
+                return BaseOutput.Fail(input.ValidationResult);
 
             var identityResponse = await _identityService.AlterarSenha(_userContext.Email, input.SenhaAtual, input.NovaSenha);
             if (!identityResponse.Success)
-                return AlterarSenhaResult.Fail(identityResponse.Errors);
+                return BaseOutput.Fail(identityResponse.Errors);
 
-            return AlterarSenhaResult.Ok();
+            return BaseOutput.Ok();
         }
     }
 }

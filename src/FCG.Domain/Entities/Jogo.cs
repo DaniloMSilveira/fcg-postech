@@ -29,8 +29,7 @@ namespace FCG.Domain.Entities
             string? descricao,
             string? desenvolvedora,
             DateTime? dataLancamento,
-            decimal preco,
-            bool ativo)
+            decimal preco)
         {
             Id = Guid.NewGuid();
             Nome = nome;
@@ -38,7 +37,7 @@ namespace FCG.Domain.Entities
             Desenvolvedora = desenvolvedora;
             DataLancamento = dataLancamento;
             Preco = preco;
-            Ativo = ativo;
+            Ativo = true;
             CriadoEm = DateTime.Now;
         }
 
@@ -46,15 +45,13 @@ namespace FCG.Domain.Entities
             string? descricao,
             string? desenvolvedora,
             DateTime? dataLancamento,
-            decimal preco,
-            bool ativo)
+            decimal preco)
         {
             Nome = nome;
             Descricao = descricao;
             Desenvolvedora = desenvolvedora;
             DataLancamento = dataLancamento;
             Preco = preco;
-            Ativo = ativo;
             ModificadoEm = DateTime.Now;
         }
 

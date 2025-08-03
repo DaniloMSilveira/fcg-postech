@@ -10,7 +10,6 @@ using FCG.Infra.Security.Services;
 
 using CriarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.UsuarioOutput>;
 using AdicionarJogoBibliotecaUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Usuarios.UsuarioJogoOutput>;
-using RemoverUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 
 namespace FCG.Application.Services
 {
@@ -87,11 +86,11 @@ namespace FCG.Application.Services
             }
         }
 
-        public async Task<BaseOutput<bool>> Remover(Guid id)
+        public async Task<BaseOutput> Remover(Guid id)
         {
             var usuario = await _repository.ObterPorId(id);
             if (usuario is null)
-                return RemoverUsuarioResult.Fail("Usuário não encontrado.");
+                return BaseOutput.Fail("Usuário não encontrado.");
 
             using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
             {
@@ -105,7 +104,7 @@ namespace FCG.Application.Services
                     throw new Exception("Erro ao remover usuário no domínio.");
 
                 scope.Complete();
-                return RemoverUsuarioResult.Ok();
+                return BaseOutput.Ok();
             }
 
         }

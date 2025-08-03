@@ -14,21 +14,18 @@ namespace FCG.Application.DTOs.Inputs.Jogos
         public string? Desenvolvedora { get; private set; }
         public DateTime? DataLancamento { get; private set; }
         public decimal Preco { get; private set; }
-        public bool Ativo { get; private set; }
 
         public AlterarJogoInput(string nome,
             string? descricao,
             string? desenvolvedora,
             DateTime? dataLancamento,
-            decimal preco,
-            bool ativo)
+            decimal preco)
         {
             Nome = nome;
             Descricao = descricao;
             Desenvolvedora = desenvolvedora;
             DataLancamento = dataLancamento;
             Preco = preco;
-            Ativo = ativo;
         }
 
         public void PreencherId(Guid id)

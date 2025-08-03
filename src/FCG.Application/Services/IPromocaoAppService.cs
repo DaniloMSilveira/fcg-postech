@@ -11,8 +11,8 @@ namespace FCG.Application.Services
         Task<PromocaoOutput?> ObterPorId(Guid id);
         Task<BaseOutput<PromocaoOutput>> Criar(CriarPromocaoInput input);
         Task<BaseOutput<PromocaoOutput>> Alterar(AlterarPromocaoInput input);
-        Task<BaseOutput<bool>> Ativar(Guid id);
-        Task<BaseOutput<bool>> Inativar(Guid id);
-        Task<BaseOutput<bool>> Remover(Guid id);
+        Task<BaseOutput> Ativar(Guid id);
+        Task<BaseOutput> Inativar(Guid id);
+        Task<BaseOutput> Remover(Guid id);
     }
 }

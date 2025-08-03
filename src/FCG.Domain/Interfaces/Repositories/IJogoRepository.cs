@@ -8,7 +8,7 @@ namespace FCG.Domain.Interfaces.Repositories
 {
     public interface IJogoRepository : IRepository<Jogo>
     {
-        Task<(IEnumerable<Jogo>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro);
+        Task<(IEnumerable<Jogo>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro, bool? ativo);
         Task<bool> ExisteJogo(string nome, string? desenvolvedora, DateTime? dataLancamento);
         Task<Jogo> ObterJogoPromocoes(Guid id);
     }

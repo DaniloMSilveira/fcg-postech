@@ -77,7 +77,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPost(Name = "CriarPromocao")]
         [ProducesResponseType(typeof(PromocaoOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CriarPromocao([FromBody] CriarPromocaoInput input)
         {
             var resultado = await _promocaoAppService.Criar(input);
@@ -100,7 +100,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPut("{id}", Name = "AlterarPromocao")]
         [ProducesResponseType(typeof(PromocaoOutput), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AlterarPromocao([FromRoute] Guid id, [FromBody] AlterarPromocaoInput input)
         {
             input.PreencherId(id);
@@ -122,7 +122,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPatch("{id}/ativar", Name = "AtivarPromocao")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AtivarPromocao([FromRoute] Guid id)
         {
             var resultado = await _promocaoAppService.Ativar(id);
@@ -143,7 +143,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpPatch("{id}/inativar", Name = "InativarPromocao")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> InativarPromocao([FromRoute] Guid id)
         {
             var resultado = await _promocaoAppService.Inativar(id);
@@ -164,7 +164,7 @@ namespace FCG.API.Controllers
         [Authorize(Roles = Roles.ADMINISTRADOR)]
         [HttpDelete("{id}", Name = "RemoverPromocao")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(BaseErrorOutput), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> RemoverPromocao([FromRoute] Guid id)
         {
             var resultado = await _promocaoAppService.Remover(id);

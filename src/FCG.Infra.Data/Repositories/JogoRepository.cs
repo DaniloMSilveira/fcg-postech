@@ -15,15 +15,16 @@ namespace FCG.Infra.Data.Repositories
         {
         }
 
-        public async Task<(IEnumerable<Jogo>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro)
+        public async Task<(IEnumerable<Jogo>, int)> Consultar(int pagina, int tamanhoPagina, string? filtro, bool? ativo)
         {
             filtro = filtro?.ToLower();
             var query = _context.Jogos
                 .AsNoTracking()
                 .Include(p => p.Promocoes)
                 .Where(p =>
-                    string.IsNullOrEmpty(filtro)
-                    || (!string.IsNullOrEmpty(filtro) && p.Nome.ToLower().Contains(filtro))
+                    (p.Ativo == ativo || ativo == null)
+                    && (string.IsNullOrEmpty(filtro)
+                        || (!string.IsNullOrEmpty(filtro) && p.Nome.ToLower().Contains(filtro)))
                 );
 
             var total = await query.CountAsync();

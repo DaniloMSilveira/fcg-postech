@@ -5,13 +5,10 @@ using FCG.Application.DTOs.Outputs.Promocoes;
 using FCG.Application.DTOs.Queries.Promocoes;
 using FCG.Application.DTOs.Inputs.Promocoes;
 using FCG.Domain.Interfaces.Repositories;
+using FCG.Domain.Interfaces.Services;
 
 using CriarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Promocoes.PromocaoOutput>;
 using AlterarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Promocoes.PromocaoOutput>;
-using AtivarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using InativarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using RemoverPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
-using FCG.Domain.Interfaces.Services;
 
 namespace FCG.Application.Services
 {
@@ -107,11 +104,11 @@ namespace FCG.Application.Services
             return AlterarPromocaoResult.Ok(PromocaoOutput.FromEntity(promocao));
         }
 
-        public async Task<BaseOutput<bool>> Ativar(Guid id)
+        public async Task<BaseOutput> Ativar(Guid id)
         {
             var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
-                return AtivarPromocaoResult.Fail("Promoção não encontrada.");
+                return BaseOutput.Fail("Promoção não encontrada.");
 
             promocao.Ativar();
             _unitOfWork.PromocaoRepository.Atualizar(promocao);
@@ -120,14 +117,14 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao ativar promoção no domínio.");
 
-            return AtivarPromocaoResult.Ok();
+            return BaseOutput.Ok();
         }
 
-        public async Task<BaseOutput<bool>> Inativar(Guid id)
+        public async Task<BaseOutput> Inativar(Guid id)
         {
             var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
-                return InativarPromocaoResult.Fail("Promoção não encontrado.");
+                return BaseOutput.Fail("Promoção não encontrado.");
 
             promocao.Inativar();
             _unitOfWork.PromocaoRepository.Atualizar(promocao);
@@ -136,14 +133,14 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao inativar promoção no domínio.");
                 
-            return InativarPromocaoResult.Ok();
+            return BaseOutput.Ok();
         }
 
-        public async Task<BaseOutput<bool>> Remover(Guid id)
+        public async Task<BaseOutput> Remover(Guid id)
         {
             var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
-                return RemoverPromocaoResult.Fail("Promoção não encontrado.");
+                return BaseOutput.Fail("Promoção não encontrado.");
 
             _unitOfWork.PromocaoRepository.Remover(promocao);
 
@@ -151,7 +148,7 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao remover promoção no domínio.");
                 
-            return RemoverPromocaoResult.Ok();
+            return BaseOutput.Ok();
         }
     }
 }

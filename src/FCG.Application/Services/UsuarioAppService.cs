@@ -18,21 +18,18 @@ namespace FCG.Application.Services
     {
         private readonly IUsuarioRepository _repository;
         private readonly IJogoRepository _jogoRepository;
-        private readonly IPromocaoRepository _promocaoRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIdentityService _identityService;
         private readonly IUserContext _userContext;
 
         public UsuarioAppService(IUsuarioRepository repository,
             IJogoRepository jogoRepository,
-            IPromocaoRepository promocaoRepository,
             IUnitOfWork unitOfWork,
             IIdentityService identityService,
             IUserContext userContext)
         {
             _repository = repository;
             _jogoRepository = jogoRepository;
-            _promocaoRepository = promocaoRepository;
             _unitOfWork = unitOfWork;
             _identityService = identityService;
             _userContext = userContext;

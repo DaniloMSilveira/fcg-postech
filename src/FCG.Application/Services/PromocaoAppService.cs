@@ -11,30 +11,28 @@ using AlterarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Applic
 using AtivarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 using InativarPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 using RemoverPromocaoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
+using FCG.Domain.Interfaces.Services;
 
 namespace FCG.Application.Services
 {
     public class PromocaoAppService : IPromocaoAppService
     {
-        private readonly IPromocaoRepository _promocaoRepository;
-        private readonly IJogoRepository _jogoRepository;
+        private readonly IPromocaoRepository _repository;
+        private readonly IPromocaoService _service;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserContext _userContext;
 
-        public PromocaoAppService(IPromocaoRepository promocaoRepository,
-            IJogoRepository jogoRepository,
-            IUnitOfWork unitOfWork,
-            IUserContext userContext)
+        public PromocaoAppService(IPromocaoRepository repository,
+            IPromocaoService service,
+            IUnitOfWork unitOfWork)
         {
-            _promocaoRepository = promocaoRepository;
-            _jogoRepository = jogoRepository;
+            _repository = repository;
+            _service = service;
             _unitOfWork = unitOfWork;
-            _userContext = userContext;
         }
         
         public async Task<PaginacaoOutput<PromocaoItemListaOutput>> PesquisarPromocoes(PesquisarPromocoesQuery query)
         {
-            var (promocoes, total) = await _promocaoRepository.Consultar(query.Pagina, query.TamanhoPagina, query.PrecoMinimo, query.PrecoMaximo);
+            var (promocoes, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.PrecoMinimo, query.PrecoMaximo);
 
             var dados = promocoes.Select(promocao => new PromocaoItemListaOutput
             {
@@ -58,18 +56,11 @@ namespace FCG.Application.Services
 
         public async Task<PromocaoOutput?> ObterPorId(Guid id)
         {
-            var promocao = await _promocaoRepository.ObterPorId(id);
+            var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
                 return null;
 
-            return new PromocaoOutput
-            {
-                Id = promocao.Id,
-                JogoId = promocao.JogoId,
-                Preco = promocao.Preco,
-                DataInicio = promocao.DataInicio,
-                DataFim = promocao.DataFim,
-            };
+            return PromocaoOutput.FromEntity(promocao);
         }
 
         public async Task<BaseOutput<PromocaoOutput>> Criar(CriarPromocaoInput input)
@@ -77,39 +68,20 @@ namespace FCG.Application.Services
             if (!input.IsValid())
                 return CriarPromocaoResult.Fail(input.ValidationResult);
 
-            var jogo = await _jogoRepository.ObterPorId(input.JogoId);
-            if (jogo is null)
-                return CriarPromocaoResult.Fail("Jogo não encontrado.");
+            var (sucesso, erro) = await _service.ValidarNovaPromocao(
+                input.JogoId, input.Preco, input.DataInicio, input.DataFim);
 
-            var existePromocao = await _promocaoRepository.ExistePromocao(input.JogoId, input.DataInicio, input.DataFim);
-            if (existePromocao)
-                return CriarPromocaoResult.Fail("Já existe uma promoção ativa para este jogo.");
+            if (!sucesso)
+                return CriarPromocaoResult.Fail(erro!);
 
-            if (input.Preco >= jogo.Preco)
-                return CriarPromocaoResult.Fail("Preço da promoção deve ser menor que o preço do jobo.");
-
-            var promocao = new Promocao(input.JogoId,
-                input.Preco,
-                input.DataInicio,
-                input.DataFim,
-                input.Ativo);
-
+            var promocao = new Promocao(input.JogoId, input.Preco, input.DataInicio, input.DataFim, input.Ativo);
             await _unitOfWork.PromocaoRepository.Adicionar(promocao);
 
             var success = await _unitOfWork.Commit();
             if (!success)
                 throw new Exception("Erro ao criar promoção no domínio.");
 
-            var resultado = new PromocaoOutput
-            {
-                Id = promocao.Id,
-                JogoId = promocao.JogoId,
-                Preco = promocao.Preco,
-                DataInicio = promocao.DataInicio,
-                DataFim = promocao.DataFim
-            };
-                
-            return CriarPromocaoResult.Ok(resultado);
+            return CriarPromocaoResult.Ok(PromocaoOutput.FromEntity(promocao));
         }
 
         public async Task<BaseOutput<PromocaoOutput>> Alterar(AlterarPromocaoInput input)
@@ -117,16 +89,13 @@ namespace FCG.Application.Services
             if (!input.IsValid())
                 return AlterarPromocaoResult.Fail(input.ValidationResult);
 
-            var promocao = await _promocaoRepository.ObterPorId(input.Id);
+            var promocao = await _repository.ObterPorId(input.Id);
             if (promocao is null)
                 return AlterarPromocaoResult.Fail("Promoção não encontrada.");
 
-            var jogo = await _jogoRepository.ObterPorId(promocao.JogoId);
-            if (jogo is null)
-                return CriarPromocaoResult.Fail("Jogo não encontrado.");
-
-            if (input.Preco >= jogo.Preco)
-                return CriarPromocaoResult.Fail("Preço da promoção deve ser menor que o preço do jobo.");
+            var (sucesso, erro) = await _service.ValidarAlteracaoPromocao(promocao, input.Preco);
+            if (!sucesso)
+                return AlterarPromocaoResult.Fail(erro!);
 
             promocao.Alterar(input.Preco, input.DataInicio, input.DataFim);
             _unitOfWork.PromocaoRepository.Atualizar(promocao);
@@ -135,21 +104,12 @@ namespace FCG.Application.Services
             if (!success)
                 throw new Exception("Erro ao atualizar promoção no domínio.");
 
-            var resultado = new PromocaoOutput
-            {
-                Id = promocao.Id,
-                JogoId = promocao.JogoId,
-                Preco = promocao.Preco,
-                DataInicio = promocao.DataInicio,
-                DataFim = promocao.DataFim
-            };
-                
-            return AlterarPromocaoResult.Ok(resultado);
+            return AlterarPromocaoResult.Ok(PromocaoOutput.FromEntity(promocao));
         }
 
         public async Task<BaseOutput<bool>> Ativar(Guid id)
         {
-            var promocao = await _promocaoRepository.ObterPorId(id);
+            var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
                 return AtivarPromocaoResult.Fail("Promoção não encontrada.");
 
@@ -165,7 +125,7 @@ namespace FCG.Application.Services
 
         public async Task<BaseOutput<bool>> Inativar(Guid id)
         {
-            var promocao = await _promocaoRepository.ObterPorId(id);
+            var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
                 return InativarPromocaoResult.Fail("Promoção não encontrado.");
 
@@ -181,7 +141,7 @@ namespace FCG.Application.Services
 
         public async Task<BaseOutput<bool>> Remover(Guid id)
         {
-            var promocao = await _promocaoRepository.ObterPorId(id);
+            var promocao = await _repository.ObterPorId(id);
             if (promocao is null)
                 return RemoverPromocaoResult.Fail("Promoção não encontrado.");
 

@@ -18,6 +18,7 @@ using AlterarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Applicatio
 using AtivarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 using InativarJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
 using RemoverJogoResult = FCG.Application.DTOs.Outputs.BaseOutput<bool>;
+using FCG.Domain.Interfaces.Services;
 
 
 namespace FCG.Application.Services
@@ -26,15 +27,15 @@ namespace FCG.Application.Services
     {
         private readonly IJogoRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IUserContext _userContext;
+        private readonly IJogoService _service;
 
         public JogoAppService(IJogoRepository repository,
             IUnitOfWork unitOfWork,
-            IUserContext userContext)
+            IJogoService service)
         {
             _repository = repository;
             _unitOfWork = unitOfWork;
-            _userContext = userContext;
+            _service = service;
         }
 
         public async Task<PaginacaoOutput<JogoItemListaOutput>> PesquisarJogos(PesquisarJogosQuery query)
@@ -71,12 +72,7 @@ namespace FCG.Application.Services
             if (jogo is null)
                 return null;
 
-            return new JogoOutput(jogo.Id,
-                jogo.Nome,
-                jogo.Descricao,
-                jogo.Desenvolvedora,
-                jogo.DataLancamento,
-                jogo.Preco);
+            return JogoOutput.FromEntity(jogo);
         }
 
         public async Task<BaseOutput<JogoOutput>> Criar(CriarJogoInput input)
@@ -84,11 +80,11 @@ namespace FCG.Application.Services
             if (!input.IsValid())
                 return CriarJogoResult.Fail(input.ValidationResult);
 
-            var existeJogo = await _repository.ExisteJogo(input.Nome, input.Desenvolvedora, input.DataLancamento);
-            if (existeJogo)
+            if (await _service.JogoDuplicado(input.Nome, input.Desenvolvedora, input.DataLancamento))
                 return CriarJogoResult.Fail("Já existe este jogo no sistema.");
 
-            var jogo = new Jogo(input.Nome,
+            var jogo = new Jogo(
+                input.Nome,
                 input.Descricao,
                 input.Desenvolvedora,
                 input.DataLancamento,
@@ -99,16 +95,9 @@ namespace FCG.Application.Services
 
             var success = await _unitOfWork.Commit();
             if (!success)
-                throw new Exception("Erro ao criar jogo no domínio.");
+                throw new Exception("Erro ao persistir dados no banco.");
 
-            var resultado = new JogoOutput(jogo.Id,
-                jogo.Nome,
-                jogo.Descricao,
-                jogo.Desenvolvedora,
-                jogo.DataLancamento,
-                jogo.Preco);
-                
-            return CriarJogoResult.Ok(resultado);
+            return CriarJogoResult.Ok(JogoOutput.FromEntity(jogo));
         }
 
         public async Task<BaseOutput<JogoOutput>> Alterar(AlterarJogoInput input)
@@ -120,26 +109,21 @@ namespace FCG.Application.Services
             if (jogo is null)
                 return AlterarJogoResult.Fail("Jogo não encontrado.");
 
-            jogo.Alterar(input.Nome,
+            jogo.Alterar(
+                input.Nome,
                 input.Descricao,
                 input.Desenvolvedora,
                 input.DataLancamento,
                 input.Preco,
                 input.Ativo);
+
             _unitOfWork.JogoRepository.Atualizar(jogo);
 
             var success = await _unitOfWork.Commit();
             if (!success)
-                throw new Exception("Erro ao atualizar jogo no domínio.");
+                throw new Exception("Erro ao persistir dados no banco.");
 
-            var resultado = new JogoOutput(jogo.Id,
-                jogo.Nome,
-                jogo.Descricao,
-                jogo.Desenvolvedora,
-                jogo.DataLancamento,
-                jogo.Preco);
-                
-            return AlterarJogoResult.Ok(resultado);
+            return AlterarJogoResult.Ok(JogoOutput.FromEntity(jogo));
         }
 
         public async Task<BaseOutput<bool>> Ativar(Guid id)
@@ -153,8 +137,8 @@ namespace FCG.Application.Services
 
             var success = await _unitOfWork.Commit();
             if (!success)
-                throw new Exception("Erro ao ativar jogo no domínio.");
-                
+                throw new Exception("Erro ao persistir dados no banco.");
+
             return AtivarJogoResult.Ok();
         }
 
@@ -169,8 +153,8 @@ namespace FCG.Application.Services
 
             var success = await _unitOfWork.Commit();
             if (!success)
-                throw new Exception("Erro ao inativar jogo no domínio.");
-                
+                throw new Exception("Erro ao persistir dados no banco.");
+
             return InativarJogoResult.Ok();
         }
 
@@ -184,8 +168,8 @@ namespace FCG.Application.Services
 
             var success = await _unitOfWork.Commit();
             if (!success)
-                throw new Exception("Erro ao remover jogo no domínio.");
-                
+                throw new Exception("Erro ao persistir dados no banco.");
+
             return RemoverJogoResult.Ok();
         }
     }

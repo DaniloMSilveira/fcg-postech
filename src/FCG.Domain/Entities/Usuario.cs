@@ -1,5 +1,3 @@
-using FCG.Domain.Exceptions;
-
 namespace FCG.Domain.Entities
 {
     public class Usuario : IEntity, IAggregateRoot

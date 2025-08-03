@@ -4,6 +4,8 @@ using FCG.API.Middlewares;
 using FCG.Application.Security;
 using FCG.Application.Services;
 using FCG.Domain.Interfaces.Repositories;
+using FCG.Domain.Interfaces.Services;
+using FCG.Domain.Services;
 using FCG.Infra.Data.Contexts;
 using FCG.Infra.Data.Repositories;
 using FCG.Infra.Data.Seeds;
@@ -37,9 +39,11 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IUsuarioAppService, UsuarioAppService>();
 
 builder.Services.AddScoped<IJogoRepository, JogoRepository>();
+builder.Services.AddScoped<IJogoService, JogoService>();
 builder.Services.AddScoped<IJogoAppService, JogoAppService>();
 
 builder.Services.AddScoped<IPromocaoRepository, PromocaoRepository>();
+builder.Services.AddScoped<IPromocaoService, PromocaoService>();
 builder.Services.AddScoped<IPromocaoAppService, PromocaoAppService>();
 
 builder.Services.AddHttpContextAccessor();
@@ -62,8 +66,8 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityCustomUser>>();
     var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-    // await IdentitySeed.SeedData(userManager, roleManager);
-    // await FCGSeed.SeedData(unitOfWork);
+    await IdentitySeed.SeedData(userManager, roleManager);
+    await FCGSeed.SeedData(unitOfWork);
 }
 
 // Configure the HTTP request pipeline.

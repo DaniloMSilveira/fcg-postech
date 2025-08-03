@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FCG.Domain.Entities;
 
 namespace FCG.Application.DTOs.Outputs.Jogos
 {
@@ -28,6 +29,17 @@ namespace FCG.Application.DTOs.Outputs.Jogos
             Desenvolvedora = desenvolvedora;
             DataLancamento = dataLancamento;
             Preco = preco;
+        }
+
+        public static JogoOutput FromEntity(Jogo jogo)
+        {
+            return new JogoOutput(
+                jogo.Id,
+                jogo.Nome,
+                jogo.Descricao,
+                jogo.Desenvolvedora,
+                jogo.DataLancamento,
+                jogo.Preco);
         }
     }
 }

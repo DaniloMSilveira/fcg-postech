@@ -15,12 +15,12 @@ namespace FCG.Infra.Data.Repositories
         {
         }
 
-        public async Task<(IEnumerable<Promocao>, int)> Consultar(int pagina, int tamanhoPagina, decimal? precoMinimo, decimal? precoMaximo)
+        public async Task<(IEnumerable<Promocao>, int)> Consultar(int pagina, int tamanhoPagina, decimal? precoMinimo, decimal? precoMaximo, bool? ativo)
         {
             var query = _context.Promocoes
                 .AsNoTracking()
                 .Include(p => p.Jogo)
-                .Where(p => p.Ativo == true
+                .Where(p => (p.Ativo == ativo || ativo == null)
                     && (p.Preco >= precoMinimo || precoMinimo == null)
                     && (p.Preco <= precoMaximo || precoMaximo == null));
 

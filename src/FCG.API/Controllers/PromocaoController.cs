@@ -40,7 +40,29 @@ namespace FCG.API.Controllers
             if (query.Pagina <= 0 || query.TamanhoPagina <= 0)
                 return BadRequest(new { error = "Parâmetros inválidos." });
 
-            var resultado = await _promocaoAppService.PesquisarPromocoes(query);
+            var resultado = await _promocaoAppService.PesquisarPromocoes(query, true);
+
+            return Ok(resultado);
+        }
+
+        /// <summary>
+        /// Pesquisa promoções de jogos com perfil de administrador.
+        /// </summary>
+        /// <remarks>
+        /// Permite que usuários administradores consultem a lista de todas promoções, mesmo que inativas, com suporte à paginação.
+        /// </remarks>
+        /// <param name="query">
+        /// Parâmetros da pesquisa, incluindo número da página e tamanho da página.
+        /// </param>
+        /// <response code="200">Retorna a lista paginada das promoções encontradas.</response>
+        [HttpGet("pesquisar-admin", Name = "PesquisarPromocoesAdmin")]
+        [ProducesResponseType(typeof(PaginacaoOutput<PromocaoItemListaOutput>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> PesquisarPromocoesAdmin([FromQuery] PesquisarPromocoesQuery query, bool? ativo)
+        {
+            if (query.Pagina <= 0 || query.TamanhoPagina <= 0)
+                return BadRequest(new { error = "Parâmetros inválidos." });
+
+            var resultado = await _promocaoAppService.PesquisarPromocoes(query, ativo);
 
             return Ok(resultado);
         }

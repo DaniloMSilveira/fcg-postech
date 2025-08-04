@@ -7,7 +7,7 @@ namespace FCG.Application.Services
 {
     public interface IPromocaoAppService
     {
-        Task<PaginacaoOutput<PromocaoItemListaOutput>> PesquisarPromocoes(PesquisarPromocoesQuery query);
+        Task<PaginacaoOutput<PromocaoItemListaOutput>> PesquisarPromocoes(PesquisarPromocoesQuery query, bool? ativo);
         Task<PromocaoOutput?> ObterPorId(Guid id);
         Task<BaseOutput<PromocaoOutput>> Criar(CriarPromocaoInput input);
         Task<BaseOutput<PromocaoOutput>> Alterar(AlterarPromocaoInput input);

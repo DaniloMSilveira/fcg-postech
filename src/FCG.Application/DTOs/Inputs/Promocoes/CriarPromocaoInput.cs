@@ -12,19 +12,16 @@ namespace FCG.Application.DTOs.Inputs.Promocoes
         public decimal Preco { get; private set; }
         public DateTime DataInicio { get; private set; }
         public DateTime DataFim { get; private set; }
-        public bool Ativo { get; private set; }
 
         public CriarPromocaoInput(Guid jogoId,
             decimal preco,
             DateTime dataInicio,
-            DateTime dataFim,
-            bool ativo)
+            DateTime dataFim)
         {
             JogoId = jogoId;
             Preco = preco;
             DataInicio = dataInicio;
             DataFim = dataFim;
-            Ativo = ativo;
         }
 
         protected override IValidator<CriarPromocaoInput> GetValidator()

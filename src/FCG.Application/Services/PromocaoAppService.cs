@@ -27,9 +27,9 @@ namespace FCG.Application.Services
             _unitOfWork = unitOfWork;
         }
         
-        public async Task<PaginacaoOutput<PromocaoItemListaOutput>> PesquisarPromocoes(PesquisarPromocoesQuery query)
+        public async Task<PaginacaoOutput<PromocaoItemListaOutput>> PesquisarPromocoes(PesquisarPromocoesQuery query, bool? ativo)
         {
-            var (promocoes, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.PrecoMinimo, query.PrecoMaximo);
+            var (promocoes, total) = await _repository.Consultar(query.Pagina, query.TamanhoPagina, query.PrecoMinimo, query.PrecoMaximo, ativo);
 
             var dados = promocoes.Select(promocao => new PromocaoItemListaOutput
             {
@@ -38,7 +38,8 @@ namespace FCG.Application.Services
                 JogoNome = promocao.Jogo.Nome,
                 Preco = promocao.Preco,
                 DataInicio = promocao.DataInicio,
-                DataFim = promocao.DataFim
+                DataFim = promocao.DataFim,
+                Ativo = promocao.Ativo
             });
 
             return new PaginacaoOutput<PromocaoItemListaOutput>
@@ -71,7 +72,7 @@ namespace FCG.Application.Services
             if (!sucesso)
                 return CriarPromocaoResult.Fail(erro!);
 
-            var promocao = new Promocao(input.JogoId, input.Preco, input.DataInicio, input.DataFim, input.Ativo);
+            var promocao = new Promocao(input.JogoId, input.Preco, input.DataInicio, input.DataFim);
             await _unitOfWork.PromocaoRepository.Adicionar(promocao);
 
             var success = await _unitOfWork.Commit();

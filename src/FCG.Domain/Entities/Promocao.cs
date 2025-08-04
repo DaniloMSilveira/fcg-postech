@@ -22,15 +22,14 @@ namespace FCG.Domain.Entities
         public Promocao(Guid jogoId,
             decimal preco,
             DateTime dataInicio,
-            DateTime dataFim,
-            bool ativo)
+            DateTime dataFim)
         {
             Id = Guid.NewGuid();
             JogoId = jogoId;
             Preco = preco;
             DataInicio = dataInicio;
             DataFim = dataFim;
-            Ativo = ativo;
+            Ativo = true;
             CriadoEm = DateTime.Now;
         }
 

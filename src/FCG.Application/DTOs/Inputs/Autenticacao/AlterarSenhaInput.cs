@@ -30,25 +30,25 @@ namespace FCG.Application.DTOs.Inputs.Autenticacao
         {
             RuleFor(p => p.SenhaAtual)
                 .NotEmpty()
-                .WithMessage("Senha atual é um campo obrigatório.");
+                .WithMessage("SenhaAtual é um campo obrigatório.");
 
             RuleFor(p => p.NovaSenha)
                 .NotEmpty()
-                .WithMessage("Nova senha é um campo obrigatório.");
+                .WithMessage("NovaSenha é um campo obrigatório.");
 
             RuleFor(p => p.NovaSenha)
                 .NotEqual(c => c.SenhaAtual)
-                .WithMessage("Nova senha deve ser diferente da senha atual.")
+                .WithMessage("NovaSenha deve ser diferente da senha atual.")
                 .When(p => !string.IsNullOrWhiteSpace(p.NovaSenha));
 
             RuleFor(p => p.NovaSenha)
                 .MaximumLength(40)
-                .WithMessage("Nova senha deve ter até 40 caracteres.")
+                .WithMessage("NovaSenha deve ter até 40 caracteres.")
                 .When(p => !string.IsNullOrWhiteSpace(p.NovaSenha));
 
             RuleFor(p => p.NovaSenha)
                 .Must(ValidatorHelper.ValidStrongPassword)
-                .WithMessage("Nova senha deve se enquadrar nos requisitos de segurança (mínimo 8 caracteres, uma letra maiúscula, " +
+                .WithMessage("NovaSenha deve se enquadrar nos requisitos de segurança (mínimo 8 caracteres, uma letra maiúscula, " +
                         "uma letra minúscula, um número e um caracter especial).")
                 .When(p => !string.IsNullOrWhiteSpace(p.NovaSenha));
         }

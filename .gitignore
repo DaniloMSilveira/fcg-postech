@@ -93,3 +93,6 @@ local.settings.json
 
 # Visual Studio Code
 .vscode/
+
+# Report Coverage Tests
+coverage/

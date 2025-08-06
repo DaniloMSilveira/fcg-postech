@@ -21,7 +21,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         }
 
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var input = new LoginUsuarioInput(_emailValido, _senhaValida);
@@ -38,7 +38,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_EmailObrigatorio(string email)
+        public void IsValid_DeveRetornarErro_QuandoEmailVazio(string email)
         {
             // Arrange
             var input = new LoginUsuarioInput(email, _senhaValida);
@@ -55,7 +55,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_SenhaObrigatoria(string senha)
+        public void IsValid_DeveRetornarErro_QuandoSenhaVazia(string senha)
         {
             // Arrange
             var input = new LoginUsuarioInput(_emailValido, senha);

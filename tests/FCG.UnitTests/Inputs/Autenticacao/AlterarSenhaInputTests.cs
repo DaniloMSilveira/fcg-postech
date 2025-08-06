@@ -14,7 +14,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         private string _novaSenhaValida = "Senha!123";
 
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var input = new AlterarSenhaInput(_senhaAtualValida, _novaSenhaValida);
@@ -31,7 +31,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_SenhaAtualObrigatoria(string senhaAtual)
+        public void IsValid_DeveRetornarErro_QuandoSenhaAtualVazia(string senhaAtual)
         {
             // Arrange
             var input = new AlterarSenhaInput(senhaAtual, _novaSenhaValida);
@@ -48,7 +48,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_NovaSenhaObrigatoria(string novaSenha)
+        public void IsValid_DeveRetornarErro_QuandoNovaSenhaVazia(string novaSenha)
         {
             // Arrange
             var input = new AlterarSenhaInput(_senhaAtualValida, novaSenha);
@@ -62,7 +62,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_NovaSenhaIgualSenhaAtual()
+        public void IsValid_DeveRetornarErro_QuandoNovaSenhaIgualSenhaAtual()
         {
             // Arrange
             var novaSenha = _senhaAtualValida;
@@ -81,7 +81,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         [InlineData("12345678")]
         [InlineData("senha@123")]
         [InlineData("Senha123")]
-        public void IsValid_DeveRetornarErro_NovaSenhaInvalida(string novaSenha)
+        public void IsValid_DeveRetornarErro_QuandoNovaSenhaInvalida(string novaSenha)
         {
             // Arrange
             var input = new AlterarSenhaInput(_senhaAtualValida, novaSenha);
@@ -96,7 +96,7 @@ namespace FCG.UnitTests.Inputs.Autenticacao
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_NovaSenhaTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoNovaSenhaAtingirTamanhoMaximo()
         {
             // Arrange
             var novaSenha = _novaSenhaValida + new string('a', 40);

@@ -25,7 +25,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var input = new AlterarPromocaoInput(
@@ -44,7 +44,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_IdNaoPreenchido()
+        public void IsValid_DeveRetornarErro_QuandoIdNaoPreenchido()
         {
             // Arrange
             var input = new AlterarPromocaoInput(
@@ -62,7 +62,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_IdObrigatorio()
+        public void IsValid_DeveRetornarErro_QuandoIdVazio()
         {
             // Arrange
             var input = new AlterarPromocaoInput(
@@ -84,7 +84,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         [Theory]
         [InlineData(-1)]
         [InlineData(-0.01)]
-        public void IsValid_DeveRetornarErro_PrecoNegativo(decimal preco)
+        public void IsValid_DeveRetornarErro_QuandoPrecoNegativo(decimal preco)
         {
             // Arrange
             var input = new AlterarPromocaoInput(
@@ -102,7 +102,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_DataFimMenorDataInicio()
+        public void IsValid_DeveRetornarErro_QuandoDataFimMenorDataInicio()
         {
             // Arrange
             var input = new AlterarPromocaoInput(

@@ -23,7 +23,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         }
 
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var input = new CriarUsuarioInput(_nomeValido, _emailValido, _senhaValida);
@@ -40,7 +40,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_NomeObrigatorio(string nome)
+        public void IsValid_DeveRetornarErro_QuandoNomeVazio(string nome)
         {
             // Arrange
             var input = new CriarUsuarioInput(nome, _emailValido, _senhaValida);
@@ -54,7 +54,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_NomeTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoNomeAtingirTamanhoMaximo()
         {
             // Arrange
             var nome = _nomeValido + new string('a', 256);
@@ -72,7 +72,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_EmailObrigatorio(string email)
+        public void IsValid_DeveRetornarErro_QuandoEmailVazio(string email)
         {
             // Arrange
             var input = new CriarUsuarioInput(_nomeValido, email, _senhaValida);
@@ -92,7 +92,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         [InlineData("teste@teste")]
         [InlineData("@teste")]
         [InlineData("@teste.com")]
-        public void IsValid_DeveRetornarErro_EmailInvalido(string email)
+        public void IsValid_DeveRetornarErro_QuandoEmailInvalido(string email)
         {
             // Arrange
             var input = new CriarUsuarioInput(_nomeValido, email, _senhaValida);
@@ -106,7 +106,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_EmailTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoEmailAtingirTamanhoMaximo()
         {
             // Arrange
             var email = _emailValido + new string('a', 100);
@@ -124,7 +124,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_SenhaObrigatorio(string senha)
+        public void IsValid_DeveRetornarErro_QuandoSenhaVazia(string senha)
         {
             // Arrange
             var input = new CriarUsuarioInput(_nomeValido, _emailValido, senha);
@@ -142,7 +142,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         [InlineData("12345678")]
         [InlineData("senha@123")]
         [InlineData("Senha123")]
-        public void IsValid_DeveRetornarErro_SenhaInvalida(string senha)
+        public void IsValid_DeveRetornarErro_QuandoSenhaInvalida(string senha)
         {
             // Arrange
             var input = new CriarUsuarioInput(_nomeValido, _emailValido, senha);
@@ -157,7 +157,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_SenhaTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoSenhaAtingirTamanhoMaximo()
         {
             // Arrange
             var senha = _senhaValida + new string('a', 40);

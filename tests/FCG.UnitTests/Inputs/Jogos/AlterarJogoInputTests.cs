@@ -29,7 +29,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         }
 
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var input = new AlterarJogoInput(
@@ -50,7 +50,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_IdNaoPreenchido()
+        public void IsValid_DeveRetornarErro_QuandoIdNaoPreenchido()
         {
             // Arrange
             var input = new AlterarJogoInput(
@@ -70,7 +70,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_IdObrigatorio()
+        public void IsValid_DeveRetornarErro_QuandoIdVazio()
         {
             // Arrange
             var input = new AlterarJogoInput(
@@ -95,7 +95,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         [InlineData(null)]
         [InlineData("")]
         [InlineData(" ")]
-        public void IsValid_DeveRetornarErro_NomeObrigatorio(string nome)
+        public void IsValid_DeveRetornarErro_QuandoNomeVazio(string nome)
         {
             // Arrange
             var input = new AlterarJogoInput(
@@ -116,7 +116,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_NomeTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoNomeAtingirTamanhoMaximo()
         {
             // Arrange
             var nome = _nomeValido + new string('a', 256);
@@ -138,7 +138,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_DescricaoTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoDescricaoAtingirTamanhoMaximo()
         {
             // Arrange
             var descricao = _descricaoValida + new string('a', 1024);
@@ -160,7 +160,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_DesenvolvedoraTamanhoMaximo()
+        public void IsValid_DeveRetornarErro_QuandoDesenvolvedoraAtingirTamanhoMaximo()
         {
             // Arrange
             var desenvolvedora = _desenvolvedoraValida + new string('a', 256);
@@ -184,7 +184,7 @@ namespace FCG.UnitTests.Inputs.Jogos
         [Theory]
         [InlineData(-1)]
         [InlineData(-0.01)]
-        public void IsValid_DeveRetornarErro_PrecoNegativo(decimal preco)
+        public void IsValid_DeveRetornarErro_QuandoPrecoNegativo(decimal preco)
         {
             // Arrange
             var input = new AlterarJogoInput(

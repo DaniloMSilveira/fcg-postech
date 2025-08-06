@@ -25,7 +25,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var input = new CriarPromocaoInput(
@@ -44,7 +44,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_JogoIdObrigatorio()
+        public void IsValid_DeveRetornarErro_QuandoJogoIdVazio()
         {
             // Arrange
             var jogoId = Guid.Empty;
@@ -66,7 +66,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         [Theory]
         [InlineData(-1)]
         [InlineData(-0.01)]
-        public void IsValid_DeveRetornarErro_PrecoNegativo(decimal preco)
+        public void IsValid_DeveRetornarErro_QuandoPrecoNegativo(decimal preco)
         {
             // Arrange
             var input = new CriarPromocaoInput(
@@ -85,7 +85,7 @@ namespace FCG.UnitTests.Inputs.Promocoes
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_DataFimMenorDataInicio()
+        public void IsValid_DeveRetornarErro_QuandoDataFimMenorDataInicio()
         {
             // Arrange
             var input = new CriarPromocaoInput(

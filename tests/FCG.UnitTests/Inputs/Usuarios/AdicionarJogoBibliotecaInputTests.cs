@@ -10,7 +10,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
     public class AdicionarJogoBibliotecaInputValidatorTests
     {
         [Fact]
-        public void IsValid_DeveRetornarSucesso_DadosValidos()
+        public void IsValid_DeveRetornarSucesso_QuandoDadosValidos()
         {
             // Arrange
             var jogoId = Guid.NewGuid();
@@ -25,7 +25,7 @@ namespace FCG.UnitTests.Inputs.Usuarios
         }
 
         [Fact]
-        public void IsValid_DeveRetornarErro_JogoIdObrigatorio()
+        public void IsValid_DeveRetornarErro_QuandoJogoIdVazio()
         {
             // Arrange
             var jogoId = Guid.Empty;

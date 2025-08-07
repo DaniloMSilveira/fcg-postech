@@ -20,11 +20,18 @@ namespace FCG.API.Extensions
     {
         public static IServiceCollection AddDataContexts(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<IdentityDataContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("FCG")));
+            // Para testes persistidos no SQL Server
+            // services.AddDbContext<IdentityDataContext>(options =>
+            //     options.UseSqlServer(configuration.GetConnectionString("FCG")));
+
+            // services.AddDbContext<FCGDataContext>(options =>
+            //     options.UseSqlServer(configuration.GetConnectionString("FCG")));
 
             services.AddDbContext<FCGDataContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("FCG")));
+                options.UseInMemoryDatabase("FiapCloudGames"));
+
+            services.AddDbContext<IdentityDataContext>(options =>
+                options.UseInMemoryDatabase("FiapCloudGames"));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

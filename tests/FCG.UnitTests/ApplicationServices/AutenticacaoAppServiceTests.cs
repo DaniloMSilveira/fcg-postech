@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using FCG.Application.DTOs.Inputs.Autenticacao;
+using FCG.Application.DTOs.Inputs.Usuarios;
 using FCG.Application.DTOs.Outputs;
 using FCG.Application.DTOs.Outputs.Autenticacao;
 using FCG.Application.Security;

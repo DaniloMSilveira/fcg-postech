@@ -17,5 +17,6 @@ namespace FCG.Application.Services
         Task<BaseOutput<LoginUsuarioOutput>> Login(LoginUsuarioInput input);
         PerfilUsuarioOutput ObterPerfil();
         Task<BaseOutput> AlterarSenha(AlterarSenhaInput input);
+        Task<BaseOutput> AlterarAcessos(AlterarAcessosUsuarioInput input);
     }
 }

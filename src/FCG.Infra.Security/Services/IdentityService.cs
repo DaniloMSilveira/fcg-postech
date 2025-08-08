@@ -63,6 +63,22 @@ namespace FCG.Infra.Security.Services
             return new IdentityResponse(true);
         }
 
+        public async Task<IdentityResponse> RemoverUsuario(string email)
+        {
+            var usuario = await _userManager.FindByEmailAsync(email);
+            if (usuario == null)
+                return new IdentityResponse("Usuário não encontrado.");
+
+            var resultado = await _userManager.DeleteAsync(usuario);
+            if (!resultado.Succeeded)
+            {
+                var errors = resultado.Errors.Select(e => e.Description).ToList();
+                return new IdentityResponse(false, errors);
+            }
+
+            return new IdentityResponse(true);
+        }
+
         public async Task<IdentityResponse> AlterarSenha(string email, string senhaAtual, string novaSenha)
         {
             var usuario = await _userManager.FindByEmailAsync(email);
@@ -82,18 +98,23 @@ namespace FCG.Infra.Security.Services
             return new IdentityResponse(true);
         }
 
-        public async Task<IdentityResponse> RemoverUsuario(string email)
+        public async Task<IdentityResponse> AlterarAcessos(string email, List<string> roles)
         {
             var usuario = await _userManager.FindByEmailAsync(email);
             if (usuario == null)
                 return new IdentityResponse("Usuário não encontrado.");
 
-            var resultado = await _userManager.DeleteAsync(usuario);
-            if (!resultado.Succeeded)
+            var rolesAtuais = await _userManager.GetRolesAsync(usuario);
+            if (rolesAtuais.Any())
             {
-                var errors = resultado.Errors.Select(e => e.Description).ToList();
-                return new IdentityResponse(false, errors);
+                var resultadoRemoveRoles = await _userManager.RemoveFromRolesAsync(usuario, rolesAtuais);
+                if (!resultadoRemoveRoles.Succeeded)
+                    return new IdentityResponse(false, resultadoRemoveRoles.Errors.Select(r => r.Description).ToList());
             }
+
+            var resultado = await _userManager.AddToRolesAsync(usuario, roles);
+            if (!resultado.Succeeded)
+                return new IdentityResponse(false, resultado.Errors.Select(r => r.Description).ToList());
 
             return new IdentityResponse(true);
         }

@@ -26,7 +26,7 @@ namespace FCG.API.Controllers
             _autenticacaoAppService = autenticacaoAppService;
         }
 
-        
+
         /// <summary>
         /// Registra um novo usuário no sistema.
         /// </summary>
@@ -102,6 +102,27 @@ namespace FCG.API.Controllers
         public async Task<IActionResult> AlterarSenha([FromBody] AlterarSenhaInput input)
         {
             var resultado = await _autenticacaoAppService.AlterarSenha(input);
+
+            return !resultado.Success ? BadRequest(resultado) : NoContent();
+        }
+        
+        /// <summary>
+        /// Alterar acessos de um usuário no sistema.
+        /// </summary>
+        /// <remarks>
+        /// Requer acesso de administrador. 
+        /// É necessário informar o id do usuário e as roles de acesso
+        /// </remarks>
+        /// <param name="input">Dados necessários para alteração de acessos do usuário.</param>
+        /// <response code="201">Acessos alterados com sucesso.</response>
+        /// <response code="400">Requisição inválida.</response>
+        [Authorize(Roles = Roles.ADMINISTRADOR)]
+        [HttpPatch("alterar-acessos", Name = "AlterarAcessosUsuario")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(BaseOutput), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> AlterarAcessosUsuario([FromBody] AlterarAcessosUsuarioInput input)
+        {
+            var resultado = await _autenticacaoAppService.AlterarAcessos(input);
 
             return !resultado.Success ? BadRequest(resultado) : NoContent();
         }

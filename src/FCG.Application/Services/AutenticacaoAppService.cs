@@ -6,9 +6,11 @@ using FCG.Domain.Interfaces.Repositories;
 using FCG.Infra.Security.Services;
 using FCG.Application.DTOs.Outputs.Autenticacao;
 using FCG.Application.DTOs.Inputs.Autenticacao;
+using FCG.Application.DTOs.Inputs.Usuarios;
 
 using RegistrarUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Autenticacao.RegistrarUsuarioOutput>;
 using LoginUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Autenticacao.LoginUsuarioOutput>;
+using AlterarAcessosUsuarioResult = FCG.Application.DTOs.Outputs.BaseOutput<FCG.Application.DTOs.Outputs.Autenticacao.PerfilUsuarioOutput>;
 
 namespace FCG.Application.Services
 {
@@ -88,6 +90,22 @@ namespace FCG.Application.Services
             var identityResponse = await _identityService.AlterarSenha(_userContext.Email, input.SenhaAtual, input.NovaSenha);
             if (!identityResponse.Success)
                 return BaseOutput.Fail(identityResponse.Errors);
+
+            return BaseOutput.Ok();
+        }
+
+        public async Task<BaseOutput> AlterarAcessos(AlterarAcessosUsuarioInput input)
+        {
+            if (!input.IsValid())
+                return BaseOutput.Fail(input.ValidationResult);
+
+            var usuario = await _repository.ObterPorId(input.UsuarioId);
+            if (usuario is null)
+                return BaseOutput.Fail("Usuário não encontrado.");
+
+            var identityResponse = await _identityService.AlterarAcessos(usuario.Email, input.Roles);
+            if (!identityResponse.Success)
+                throw new Exception("Erro ao alterar os acessos do usuário no identity.");
 
             return BaseOutput.Ok();
         }

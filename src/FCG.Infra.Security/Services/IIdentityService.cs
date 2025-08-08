@@ -10,7 +10,8 @@ namespace FCG.Infra.Security.Services
     {
         Task<IdentityTokenResponse> Login(string email, string senha);
         Task<IdentityResponse> CriarUsuario(string nome, string email, string senha);
-        Task<IdentityResponse> AlterarSenha(string email, string senhaAtual, string novaSenha);
         Task<IdentityResponse> RemoverUsuario(string email);
+        Task<IdentityResponse> AlterarSenha(string email, string senhaAtual, string novaSenha);
+        Task<IdentityResponse> AlterarAcessos(string email, List<string> roles);
     }
 }

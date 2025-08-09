@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace FCG.Application.DTOs.Inputs.Usuarios
+namespace FCG.Application.DTOs.Inputs.Autenticacao
 {
     public class AlterarAcessosUsuarioInput : BaseInput<AlterarAcessosUsuarioInput>
     {

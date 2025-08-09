@@ -9,6 +9,7 @@ using FCG.Application.DTOs.Outputs;
 using FCG.Application.DTOs.Outputs.Autenticacao;
 using FCG.Application.Security;
 using FCG.Application.Services;
+using FCG.Domain.Entities;
 using FCG.Domain.Interfaces.Repositories;
 using FCG.Infra.Security.Models;
 using FCG.Infra.Security.Services;
@@ -249,6 +250,76 @@ namespace FCG.UnitTests.ApplicationServices
             var result = await _appService.AlterarSenha(input);
 
             result.Success.Should().BeTrue();
+        }
+
+        [Fact]
+        public async Task AlterarAcessos_DeveRetornarErro_QuandoInputInvalido()
+        {
+            // Arrange
+            var input = new AlterarAcessosUsuarioInput(Guid.Empty, []);
+
+            // Act
+            var result = await _appService.AlterarAcessos(input);
+
+            // Assert
+            result.Success.Should().BeFalse();
+            result.Errors.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task AlterarAcessos_DeveRetornarErro_QuandoUsuarioNaoEncontrado()
+        {
+            // Arrange
+            var input = new AlterarAcessosUsuarioInput(Guid.NewGuid(), ["USUARIO"]);
+            _usuarioRepositoryMock.Setup(r => r.ObterPorId(input.UsuarioId))
+                .ReturnsAsync((Usuario)null);
+
+            // Act
+            var result = await _appService.AlterarAcessos(input);
+
+            // Assert
+            result.Success.Should().BeFalse();
+            result.Errors.Should().Contain("Usuário não encontrado.");
+        }
+
+        [Fact]
+        public async Task AlterarAcessos_DeveRetornarErro_QuandoFalhaNoIdentity()
+        {
+            // Arrange
+            var usuario = new Usuario(_nome, _email);
+            var input = new AlterarAcessosUsuarioInput(Guid.NewGuid(), ["USUARIO"]);
+            _usuarioRepositoryMock.Setup(r => r.ObterPorId(input.UsuarioId))
+                        .ReturnsAsync(usuario);
+
+            _identityServiceMock.Setup(i => i.AlterarAcessos(usuario.Email, input.Roles))
+                                .ReturnsAsync(new IdentityResponse("Erro Identity."));
+
+            // Act
+            Func<Task> act = async () => await _appService.AlterarAcessos(input);
+
+            // Assert
+            await act.Should().ThrowAsync<Exception>()
+                    .WithMessage("Erro ao alterar os acessos do usuário no identity.");
+        }
+
+        [Fact]
+        public async Task AlterarAcessos_DeveRetornarSucesso_QuandoDadosValidos()
+        {
+            // Arrange
+            var usuario = new Usuario(_nome, _email);
+            var input = new AlterarAcessosUsuarioInput(Guid.NewGuid(), ["USUARIO"]);
+            _usuarioRepositoryMock.Setup(r => r.ObterPorId(input.UsuarioId))
+                        .ReturnsAsync(usuario);
+
+            _identityServiceMock.Setup(i => i.AlterarAcessos(usuario.Email, input.Roles))
+                                .ReturnsAsync(new IdentityResponse(true));
+
+            // Act
+            var result = await _appService.AlterarAcessos(input);
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.Errors.Should().BeEmpty();
         }
     }
 }

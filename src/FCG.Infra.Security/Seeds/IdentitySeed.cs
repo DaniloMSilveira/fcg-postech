@@ -20,10 +20,31 @@ namespace FCG.Infra.Security.Seeds
                 }
             }
 
-            var nome = "Administrador";
-            var email = "admin@fcg.com";
-            var senha = "Admin123!";
+            await SeedUser(userManager,
+                "Administrador",
+                "admin@fcg.com",
+                "Admin123!",
+                [
+                    Roles.USUARIO,
+                    Roles.ADMINISTRADOR
+                ]);
+            await SeedUser(userManager,
+                "Danilo",
+                "danilo@fcg.com",
+                "Danilo123!",
+                [
+                    Roles.USUARIO
+                ]);
+        }
 
+        #region AUXILIARES
+
+        private static async Task SeedUser(UserManager<IdentityCustomUser> userManager,
+            string nome,
+            string email,
+            string senha,
+             List<string> roles)
+        {
             if (await userManager.FindByEmailAsync(email) == null)
             {
                 var user = new IdentityCustomUser
@@ -37,10 +58,14 @@ namespace FCG.Infra.Security.Seeds
                 var result = await userManager.CreateAsync(user, senha);
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, Roles.USUARIO);
-                    await userManager.AddToRoleAsync(user, Roles.ADMINISTRADOR);
+                    foreach (var role in roles)
+                    {
+                        await userManager.AddToRoleAsync(user, role);
+                    }
                 }
             }
         }
+
+        #endregion
     }
 }

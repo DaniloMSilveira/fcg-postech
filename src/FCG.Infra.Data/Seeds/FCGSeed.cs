@@ -9,7 +9,7 @@ namespace FCG.Infra.Data.Seeds
 {
     public static class FCGSeed
     {
-        public static async Task SeedData(IUnitOfWork unitOfWork)
+        public static async Task SeedTestingData(IUnitOfWork unitOfWork)
         {
             // Usuários
             await SeedUsuario(unitOfWork, "Danilo", "danilo@fcg.com");

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using FCG.Infra.Security.Constants;
 using FCG.Infra.Security.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 
 namespace FCG.Infra.Security.Seeds
 {
     public static class IdentitySeed
     {
-        public static async Task SeedData(UserManager<IdentityCustomUser> userManager, RoleManager<IdentityRole> roleManager)
+        public static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
         {
             foreach (var role in Roles.ObterListaRoles())
             {
@@ -19,7 +20,22 @@ namespace FCG.Infra.Security.Seeds
                     await roleManager.CreateAsync(new IdentityRole(role));
                 }
             }
+        }
 
+        public static async Task SeedAdminUser(UserManager<IdentityCustomUser> userManager, string email, string password)
+        {
+            await SeedUser(userManager,
+                "Administrador",
+                email,
+                password,
+                [
+                    Roles.USUARIO,
+                    Roles.ADMINISTRADOR
+                ]);
+        }
+
+        public static async Task SeedTestingData(UserManager<IdentityCustomUser> userManager)
+        {
             await SeedUser(userManager,
                 "Administrador",
                 "admin@fcg.com",

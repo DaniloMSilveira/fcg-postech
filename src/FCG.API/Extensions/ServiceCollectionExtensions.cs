@@ -13,6 +13,7 @@ using FCG.Infra.Data.Repositories;
 using FCG.Infra.Security.Contexts;
 using FCG.Infra.Security.Services;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
 
 namespace FCG.API.Extensions
 {
@@ -62,6 +63,20 @@ namespace FCG.API.Extensions
             {
                 c.IncludeXmlComments(xmlPath);
             });
+
+            return services;
+        }
+
+        public static IServiceCollection AddCustomMetrics(this IServiceCollection services)
+        {
+            services.AddOpenTelemetry()
+                .WithMetrics(builder =>
+                {
+                    builder
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddPrometheusExporter();
+                });
 
             return services;
         }

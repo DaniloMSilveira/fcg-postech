@@ -52,11 +52,21 @@ namespace FCG.API.Extensions
 
         public static WebApplication UseCustomSwagger(this WebApplication app)
         {
-            if (app.Environment.IsDevelopment())
+            using var scope = app.Services.CreateScope();
+            var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+            var swaggerEnabled = config["Swagger:Enabled"];
+            if (!string.IsNullOrEmpty(swaggerEnabled) && swaggerEnabled.ToLower() == "true")
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            return app;
+        }
+
+        public static WebApplication UseCustomMetrics(this WebApplication app)
+        {
+            app.MapPrometheusScrapingEndpoint();
 
             return app;
         }

@@ -11,6 +11,60 @@ services:
       - sql_data:/var/opt/mssql
     networks:
       - fcg-network
+    healthcheck:
+      test: /bin/bash -c "/opt/mssql-tools18/bin/sqlcmd -S localhost -C -U sa -P FcgPassword@123 -Q 'SELECT 1' || exit 1"
+      interval: 3s
+      timeout: 10s
+      retries: 10
+      start_period: 3s
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    networks:
+      - fcg-network
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8089:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - fcg-network
+    depends_on:
+      - prometheus
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - fcg-network
+    depends_on:
+      - prometheus
 
   api:
     build:
@@ -23,16 +77,22 @@ services:
       - Jwt__Key=cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e
       - IdentitySeedAdmin__Email=admin@fcg.com
       - IdentitySeedAdmin__Password=Admin123!
+      - Swagger__Enabled=true
     ports:
       - "8080:8080"
     depends_on:
-      - sqlserver
+      sqlserver:
+        condition: service_healthy
+      grafana:
+        condition: service_started
     networks:
       - fcg-network
     restart: on-failure
 
 volumes:
   sql_data:
+  prometheus_data:
+  grafana_data:
 
 networks:
   fcg-network:

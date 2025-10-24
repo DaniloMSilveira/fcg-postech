@@ -1,0 +1,25 @@
+{
+  "family": "fcg-api-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "LabRole",
+  "containerDefinitions": [
+    {
+      "name": "fcg-api",
+      "image": "",
+      "portMappings":[{"containerPort":8080,"protocol":"tcp"}],
+      "environment":[
+        {"name":"ASPNETCORE_ENVIRONMENT","value":"ASPNETCORE_ENVIRONMENT"},
+        {"name":"ConnectionStrings__FCG","value":"ConnectionStrings__FCG"},
+        {"name":"Jwt__Key","value":"Jwt__Key"},
+        {"name":"IdentitySeedAdmin__Email","value":"IdentitySeedAdmin__Email"},
+        {"name":"IdentitySeedAdmin__Password","value":"IdentitySeedAdmin__Password"},
+        {"name":"Swagger__Enabled","value":"Swagger__Enabled"}
+      ],
+      "essential":true,
+      "logConfiguration":{"logDriver":"awslogs","options":{"awslogs-group":"/ecs/fcg-api","awslogs-region":"us-east-1","awslogs-stream-prefix":"ecs"}}
+    }
+  ]
+}

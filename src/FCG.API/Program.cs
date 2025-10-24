@@ -27,7 +27,8 @@ app.UseAuthorization();
 
 app.UseCustomMiddlewares();
 
-app.UseHttpsRedirection();
 app.MapControllers();
+
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
 
 app.Run();
